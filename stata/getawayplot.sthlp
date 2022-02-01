@@ -1,31 +1,51 @@
 {smcl}
-{* *! version 1.0 17 Jan 2022}{...}
-{vieweralsosee "" "--"}{...}
-{vieweralsosee "Install command2" "ssc install command2"}{...}
-{vieweralsosee "Help command2 (if installed)" "help command2"}{...}
+{* *!version 0.1 2022-01-25}{...}
 {viewerjumpto "Syntax" "getawayplot##syntax"}{...}
 {viewerjumpto "Description" "getawayplot##description"}{...}
 {viewerjumpto "Options" "getawayplot##options"}{...}
-{viewerjumpto "Remarks" "getawayplot##remarks"}{...}
 {viewerjumpto "Examples" "getawayplot##examples"}{...}
+{viewerjumpto "Stored results" "getawayplot##stored_results"}{...}
+{viewerjumpto "References" "getawayplot##references"}{...}
+{viewerjumpto "Authors" "getawayplot##authors"}{...}
+
 {title:Title}
-{phang}
-{bf:getawayplot} {hline 2} Plot non-parametric extrapolation of treatment effect.
+
+{p 4 8}{cmd:getawayplot} {hline 2} Plot non-parametric extrapolation of treatment effect.{p_end}
 
 {marker syntax}{...}
 {title:Syntax}
-{p 8 17 2}
-{cmdab:getawayplot}
-varlist(ts
-fv)
-[{help if}]
-[{help in}]
-[{cmd:,}
-{it:options}]
 
-{synoptset 20 tabbed}{...}
-{synopthdr}
-{synoptline}
+{p 4 8}{cmd:getawayplot } 
+{cmd:{it:varlist}} (ts fv) [{help if}] [{help in}], 
+{cmd:outcome(}{it:outcomevar}{cmd:)} 
+{cmd:score(}{it:scorevar}{cmd:)}
+{cmd:bandwidth(}{it:string}{cmd:)}
+[{cmd:cutoff(}{it:#}{cmd:)}  
+{cmd:kernel(}{it:string}{cmd:)}
+{cmd:site(}{it:varname}{cmd:)}
+{cmd:nbins(}{it:numlist}{cmd:)}
+{cmd:gphoptions(}{it:string}{)}]{p_end}
+
+{synoptset 28 tabbed}{...}
+
+{marker description}{...}
+{title:Description}
+
+{p 4 8}{cmd:getawayplot} plots non-parametric estimates of the actual and counterfactual regression functions using the methodology discussed in
+ {browse "https://economics.mit.edu/files/10851":Angrist and Rokkanen (2015)} in a Regression Discontinuity framework.{p_end}
+
+{p 4 8 }The command relies on {help lpoly} to get smooth estimates of the two
+potential outcomes. Then, it jointly plots the actual smoothed regression function and the counterfactual smoothed regression function together
+with within-bin averages of the counterfactual outcome to show the fit of the non-parametric estimates. {p_end}
+
+{p 4 8} This command belongs to the {cmd:getawayplot} package. Companion commands are {help ciares:ciares}, {help ciasearch:ciasearch}, {help ciacs:ciacs}, {help ciatest:ciatest}, and
+{help getaway:getaway}. More information can be found in the {browse "https://github.com/filippopalomba/getaway-package":official Github repository}.
+
+
+{marker options}{...}
+{title:Options}
+
+{synoptset 28 tabbed}{...}
 {syntab:Main}
 {synopt:{opt o:utcome(varname)}}  specifies the dependent variable of interest.
 
@@ -61,120 +81,35 @@ fv)
 {p_end}
 {synopt:{opt gphoptions(string)}}  specifies graphical options to be passed on to the underlying graph command.
 
-{pstd}
-{p_end}
-{synoptline}
-{p2colreset}{...}
-{p 4 6 2}
-
-{marker description}{...}
-{title:Description}
-{pstd}
-
-{pstd}
-{cmd:getawayplot} plots non-parametric estimates of the actual and counterfactual regression functions using the methodology discussed in 
-Angrist and Rokkanen (2015) in a Regression Discontinuity framework. The command relies on {help lpoly} to get smooth estimates of the two
-potential outcomes. Then, it jointly plots the actual smoothed regression function and the counterfactual smoothed regression function together
-with within-bin averages of the counterfactual outcome to show the fit of the non-parametric estimates. 
-
-{marker options}{...}
-{title:Options}
-{dlgtab:Main}
-{phang}
-{opt o:utcome(varname)}     specifies the dependent variable of interest.
-
-{pstd}
-{p_end}
-{phang}
-{opt s:core(varname)}     specifies the running variable.
-
-{pstd}
-{p_end}
-{phang}
-{opt b:andwidth(string)}     specifies the bandwidth to be used for estimation. The user can specify a different bandwidth for each side.
-
-{pstd}
-{p_end}
-{phang}
-{opt c:utoff(#)}     specifies the RD cutoff for the running variable.  Default is {cmd:c(0)}. The cutoff value is subtracted from the {it:score} variable and the bandwidth. In case multiple cutoffs are present, provide the pooled cutoff.
-
-{pstd}
-{p_end}
-{phang}
-{opt k:ernel(string)}     specifies the kernel function. The default is {cmd:kernel(}{it:epanechnikov}{cmd:)}. See kernel functions allowed in {help lpoly}.
-
-{pstd}
-{p_end}
-{phang}
-{opt site(varname)}     specifies the variable identifying the site to add site fixed effects.
-
-{pstd}
-{p_end}
-{phang}
-{opt d:egree(#)}     specifies the degree of the local polynomial smooth. The default is {cmd: degree(0)}.
-
-{pstd}
-{p_end}
-{phang}
-{opt nb:ins(numlist max=2  integer)}     specifies the number of bins for which the counterfactual average is shown in the final graph. Default is {cmd:nbins(10 10)}.
-
-{pstd}
-{p_end}
-{phang}
-{opt gphoptions(string)}     specifies graphical options to be passed on to the underlying graph command.
-
-{pstd}
-{p_end}
+    {hline}
 
 
 {marker examples}{...}
-{title:Examples}
-{pstd}
+{title:Example: Simulated Data}
 
-{pstd}
+{p 4 8}Setup{p_end}
+{p 8 8}{cmd:use simulated_getawayplot.dta}{p_end}
 
-{pstd}
-The example below show how to correctly use the command {cmd:getawayplot} to plot actual and counterfactual regression functions. 
-Suppose that we have at hand an {it:outcome} variable, a {it:score} variable and a set of K covariates ({it:varlist}) that makes the running variable
-ignorable. For the sake of the example assume the bandwidth to be 10 and the cutoff to be 0. To plot the regression functions, then
+{p 4 8}Prepare data{p_end}
+{p 8 8}{cmd:generate X2 = X^2}{p_end}
+{p 8 8}{cmd:generate interaction = X*T}{p_end}
+{p 8 8}{cmd:generate interaction2 = X2*T}{p_end}
+{p 8 8}{cmd:generate w1sq = w1^2}{p_end}
+{p 8 8}{cmd:generate w2sq = w2^2}{p_end}
+{p 8 8}{cmd:generate w2Xw1 = w2*w1}{p_end}
 
-{pstd}
-{cmd:getawayplot cov1 cov2 ... covK, o(outcome) s(score) b(10) path({it:saving_location.format})}
+{p 4 8}Estimate Potential Outcomes{p_end}
+{p 8 8}{cmd:getawayplot w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) c(0) b(7) k(triangle) d(2) nb(30) site(site) gphoptions(xlabel(-6(3)6))
+}{p_end}
 
-{pstd}
-
-
+{marker references}{...}
 {title:References}
-{pstd}
 
-{pstd}
-Angrist, J. D., & Rokkanen, M. (2015). Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff. 
-{it:Journal of the American Statistical Association}, 110(512), 1331-1344.
+{p 4 8}Angrist, Joshua D., and Miikka Rokkanen. {browse "https://economics.mit.edu/files/10851":Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff.} 
+{it:Journal of the American Statistical Association} 110.512 (2015): 1331-1344.{p_end}
 
+{marker authors}{...}
+{title:Authors}
 
-{title:Author}
-{p}
-
-Filippo Palomba, Department of Economics, Princeton University.
-
-Email {browse "mailto:fpalomba@princeton.edu":fpalomba@princeton.edu}
-
-
-
-{title:See Also}
-Related commands:
-
-
-{pstd}
-Other Related Commands (ssc repository not working yet): {p_end}
-
-{synoptset 27 }{...}
-
-{synopt:{help ciasearch} (if installed)} {stata ssc install ciasearch}   (to install) {p_end}
-{synopt:{help ciares} (if installed)}   {stata ssc install ciares} (to install) {p_end}
-{synopt:{help ciacs} (if installed)}   {stata ssc install ciacs}     (to install) {p_end}
-{synopt:{help ciatest}  (if installed)}   {stata ssc install ciatest}      (to install) {p_end}
-{synopt:{help getaway} (if installed)} {stata ssc install getaway}   (to install) {p_end}
-
-{p2colreset}{...}
-
+{p 4 8}Filippo Palomba, Princeton University, Princeton, NJ.
+{browse "mailto:fpalomba@princeton.edu":fpalomba@princeton.edu}.

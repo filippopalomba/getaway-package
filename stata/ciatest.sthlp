@@ -10,7 +10,7 @@
 
 {title:Title}
 
-{p 4 8}{cmd:ciatest} {hline 2} Test for ignorability of the running variable in a Regression Discontinuity framework.{p_end}
+{p 4 8}{cmd:ciatest} {hline 2} Test for ignorability of the running variable in Regression Discontinuity designs.{p_end}
 
 {marker syntax}{...}
 {title:Syntax}
@@ -23,9 +23,9 @@
 [{cmd:cutoff(}{it:#}{cmd:)}  
 {cmd:poly(}{it:numlist}{cmd:)}
 {cmd:robust}
-{cmd:vce(}{it:varname}{)}
-{cmd:site(}{it:varname}{)}
-{cmd:alpha(}{it:#}{)}
+{cmd:vce(}{it:varname}{cmd:)}
+{cmd:site(}{it:varname}{cmd:)}
+{cmd:alpha(}{it:#}{cmd:)}
 {cmd:details}
 {cmd:noise}]{p_end}
 
@@ -35,7 +35,7 @@
 {title:Description}
 
 {p 4 8}{cmd:ciatest} tests whether the set of candidate variables ({it:varlist}) makes the running variable ignorable on the two sides of the cutoff. This 
-test validates the use of the extrapolating procedure developed by Angrist and Rokkanen (2015) in a Regression Discontinuity framework.{p_end}
+test validates the use of the extrapolating procedure developed by {browse "https://economics.mit.edu/files/10851":Angrist and Rokkanen (2015)} in a Regression Discontinuity framework.{p_end}
 
 {p 4 8 }The main testing procedure runs two separate regressions of {it:outcomevar} on a constant, {it:varlist} and {it:scorevar} on the left and on the right of the cutoff.
 The table named "CIA Test Results" displays the results of the test for the null of the coefficient of {it:scorevar} being equal to 0. The CIA condition
@@ -55,13 +55,14 @@ Indeed, comparing the results in the main table with the ones in ii) allows to d
 is driven by the variables in {it:varlist} or  by missing values. In the latter case, it would not be possible to claim that the variables contained in {it:varlist} 
 validate the CIA assumption.{p_end}
 
+{p 4 8} This command belongs to the {cmd:getaway} package. Companion commands are {help ciares:ciares}, {help ciasearch:ciasearch}, {help ciacs:ciacs}, {help getaway:getaway}, and
+{help getawayplot:getawayplot}. More information can be found in the {browse "https://github.com/filippopalomba/getaway-package":official Github repository}.
+
 
 {marker options}{...}
 {title:Options}
 
 {synoptset 28 tabbed}{...}
-{synopthdr}
-{synoptline}
 {syntab:Main}
 {synopt:{opt o:utcome(varname)}}  specifies the dependent variable of interest.
 
@@ -93,7 +94,6 @@ validate the CIA assumption.{p_end}
 {p_end}
 {synopt:{opt site(varname)}}  specifies the variable identifying the site to add site fixed effects.
 
-
 {pstd}
 {p_end}
 {synopt:{opt alpha(#)}} specifies the level of I-type error in the CIA test. Default is {cmd:alpha(0.1)}.
@@ -102,8 +102,7 @@ validate the CIA assumption.{p_end}
 {p_end}
 {synopt:{opt d:etails}}  reports results of additional tests in the output. The {cmd:details} option reports the main statistics of the simple regression of {cmd:outcome} on {cmd:score} 
 in both the full-sample and the restricted-sample. The restricted-sample is the sample composed by all units with no missing values in {cmd:outcome}, {cmd:score}, and {it:varlist}, whilst the full-sample
-is defined as those units with no missing entries just in {cmd:outcome} and {cmd:score}. This additional check is particularly useful when there are missing values in {it:varlist}.]
-opt[noise prints all testing regression outputs.
+is defined as those units with no missing entries just in {cmd:outcome} and {cmd:score}. This additional check is particularly useful when there are missing values in {it:varlist}.
 
 {pstd}
 {p_end}
@@ -116,18 +115,18 @@ opt[noise prints all testing regression outputs.
 {title:Example: Simulated Data}
 
 {p 4 8}Setup{p_end}
-{p 8 8}{cmd:. use simulated_getaway.dta}{p_end}
+{p 8 8}{cmd:use simulated_getawayplot.dta}{p_end}
 
 {p 4 8}Prepare data{p_end}
-{p 8 8}{cmd:. generate X2 = X^2}{p_end}
-{p 8 8}{cmd:. generate interaction = X*T}{p_end}
-{p 8 8}{cmd:. generate interaction2 = X2*T}{p_end}
-{p 8 8}{cmd:. generate w1sq = w1^2}{p_end}
-{p 8 8}{cmd:. generate w2sq = w2^2}{p_end}
-{p 8 8}{cmd:. generate w2Xw1 = w2*w1}{p_end}
+{p 8 8}{cmd:generate X2 = X^2}{p_end}
+{p 8 8}{cmd:generate interaction = X*T}{p_end}
+{p 8 8}{cmd:generate interaction2 = X2*T}{p_end}
+{p 8 8}{cmd:generate w1sq = w1^2}{p_end}
+{p 8 8}{cmd:generate w2sq = w2^2}{p_end}
+{p 8 8}{cmd:generate w2Xw1 = w2*w1}{p_end}
 
 {p 4 8}Test the CIA{p_end}
-{p 8 8}{cmd:. ciatest w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) c(0) b(7) p(2) site(site)}{p_end}
+{p 8 8}{cmd:ciatest w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) c(0) b(7) p(2) site(site)}{p_end}
 
 
 {p 4 8}The examples below show how to correctly use the command {cmd:ciatest} to check whether the CIA holds or not. Suppose that we have at hand an
@@ -158,13 +157,10 @@ ignorable, i.e. makes CIA hold. To do so, it is enough to run (for the sake of t
 
 {p 8 8}{cmd:ciatest cov1 cov2 ... covK, o(outcome) s(score) b(10) p(2 3) vce(clustervar) site(ranking) details}{p_end}
 
-
-
-
 {marker stored_results}{...}
 {title:Stored results}
 
-{p 4 8}{cmd:scest} stores the following in {cmd:e()}:
+{p 4 8}{cmd:ciatest} stores the following in {cmd:e()}:
 
 {synoptset 25 tabbed}{...}
 {p2col 5 20 24 2: Matrices}{p_end}

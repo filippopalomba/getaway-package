@@ -9,70 +9,7 @@ FUTURE release should include:
 	- Appropriate label tickers on the Y-axis.
 */
 
-/* 
-START HELP FILE
-
-title[Verify graphically the common support condition for heterogeneous treatment effect estimation in RDD.]
-
-desc[
-{cmd:getawaycs} allows to visualize the common support condition to validate estimation of treatment effects away from the cutoff in a Regression Discontinuity framework as proposed in 
-Angrist and Rokkanen (2015).
-]
-
-opt[outcome specifies the dependent variable of interest. This option is used just to mark the sample on which the pscore is estimated.]
-opt[assign sets the assignment to treatment variable.]
-opt[score specifies the running variable.]
-opt[bandwidth specifies the bandwidth to be used for estimation. The user can specify a different bandwidth for each side.]
-opt[cutoff specifies the RD cutoff for the running variable.  Default is {cmd:c(0)}. The cutoff value is subtracted from the {it:score} variable and the bandwidth. In case multiple cutoffs are present, provide the pooled cutoff.]
-opt[nbins number of bins of the common support histogram. Default is {cmd:nbins(10 10)}.]
-opt[site specifies the variable identifying the site to add site fixed effects.]
-opt[asis forces retention of perfect predictor variables and their associated perfectly predicted observations.]
-opt[gphoptions specifies graphical options to be passed on to the underlying graph command.]
-opt[pscore specifies the name of the variable containing the pscore. This variable is added to the current dataset.]
-opt[probit implements a probit model to estimate the pscore.]
-opt[kdensity displays kernel densities rather than histograms, which is the default.]
-opt[nograph suppresses any graphical output.]
-
-example[
-
-The example below show how to correctly use the command {cmd:ciacs} to visualize the common support condition. 
-Suppose that we have at hand an {it:outcome} variable, a {it:score} variable that induces assignment to treatment ({it:assign}) 
-and a set of K covariates ({it:varlist}) that makes the running variable ignorable. For the sake of the example assume the bandwidth 
-to be 10 and the cutoff to be 0. To verify the common support condition graphically, then
-
-{cmd:ciacs cov1 cov2 ... covK, o(outcome) a(assign) s(score) b(10)}
-]
-
-author[Filippo Palomba]
-institute[Department of Economics, Princeton University]
-email[fpalomba@princeton.edu]
-
-seealso[
-
-{pstd}
-Other Related Commands (ssc repository not working yet): {p_end}
-
-{synoptset 27 }{...}
-
-{synopt:{help ciasearch} (if installed)} {stata ssc install ciasearch}   (to install) {p_end}
-{synopt:{help ciares} (if installed)}   {stata ssc install ciares} (to install) {p_end}
-{synopt:{help ciatest} (if installed)}   {stata ssc install ciatest}     (to install) {p_end}
-{synopt:{help getaway} (if installed)} {stata ssc install getaway}   (to install) {p_end}
-{synopt:{help getawayplot}  (if installed)}   {stata ssc install getawayplot}      (to install) {p_end}
-
-{p2colreset}{...}
-
-]
-
-references[
-Angrist, J. D., & Rokkanen, M. (2015). Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff. 
-{it:Journal of the American Statistical Association}, 110(512), 1331-1344.
-]
-
-END HELP FILE 
-*/
-
-program ciacs, rclass         
+program ciacs, eclass         
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Assign(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) NBins(integer 10)  ///
@@ -245,7 +182,7 @@ version 14.0
 					}
 				}
 				
-				return scalar CSmin = `csmin'
-				return scalar CSmax = `csmax'
+				ereturn scalar CSmin = `csmin'
+				ereturn scalar CSmax = `csmax'
 					   
 end

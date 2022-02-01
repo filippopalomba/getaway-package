@@ -4,67 +4,6 @@
 *! Email       : fpalomba@princeton.edu
 *! Description : Graphical visualization of the conditional independence assumption
 
-/* 
-START HELP FILE
-
-title[Verify graphically the conditional independence assumption.]
-
-desc[
-{cmd:ciares} allows to visualize the conditional independence assumption of the running variable given a certain set of covariates 
-in a Regression Discontinuity framework as proposed in Angrist and Rokkanen (2015).
-
-The command {cmd:ciares} plots the residuals of the regression of {it:outcome} on a constant and {it:varlist} against the running variable. 
-If the CIA condition holds, then the plot should approximate a flat line. 
-]
-
-opt[outcome specifies the dependent variable of interest.]
-opt[score specifies the running variable.]
-opt[bandwidth specifies the bandwidth to be used for estimation. The user can specify a different bandwidth for each side.]
-opt[nbins specifies the number of bins in which the average of residuals should be computed. The number of bins can be specified for each side of 
-	the cutoff. Default is {cmd:nbins(10 10)}.]
-opt[cutoff specifies the RD cutoff for the running variable.  Default is {cmd:c(0)}. The cutoff value is subtracted from the {it:score} variable and the bandwidth. In case multiple cutoffs are present, provide the pooled cutoff.]
-opt[site specifies the variable identifying the site to add site fixed effects.]
-opt[gphoptions specifies graphical options to be passed on to the underlying graph command.]
-opt[cmpr adds the conditional regression function of {\cmd: outcome} on the {\cdm: score}. The form of polynomials on the left and on the right can be modelled independently - eg. {\cmd: cmpr(2 3)} for a second order polynomial on the left and a third order on the right.]
-
-example[
-
-The example below show how to correctly use the command {cmd:ciares}. Suppose that we have at hand an {it:outcome} variable, a {it:score} variable and a set of K covariates ({it:varlist}) that makes the running variable
-ignorable. For the sake of the example assume the bandwidth to be 10 and the cutoff to be 0. To visualize the conditional independence assumption, then
-
-{cmd:ciares cov1 cov2 ... covK, o(outcome) s(score) b(10)}
-
-]
-
-author[Filippo Palomba]
-institute[Department of Economics, Princeton University]
-email[fpalomba@princeton.edu]
-
-seealso[
-
-{pstd}
-Other Related Commands (ssc repository not working yet): {p_end}
-
-{synoptset 27 }{...}
-
-{synopt:{help ciasearch} (if installed)} {stata ssc install ciasearch}   (to install) {p_end}
-{synopt:{help ciatest} (if installed)}   {stata ssc install ciatest} (to install) {p_end}
-{synopt:{help ciacs} (if installed)}   {stata ssc install ciacs}     (to install) {p_end}
-{synopt:{help getaway} (if installed)} {stata ssc install getaway}   (to install) {p_end}
-{synopt:{help getawayplot}  (if installed)}   {stata ssc install getawayplot}      (to install) {p_end}
-
-{p2colreset}{...}
-
-]
-
-references[
-Angrist, J. D., & Rokkanen, M. (2015). Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff. 
-{it:Journal of the American Statistical Association}, 110(512), 1331-1344.
-]
-
-
-END HELP FILE 
-*/
 
 program ciares
 version 14.0

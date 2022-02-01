@@ -4,116 +4,8 @@
 *! Email       : fpalomba@princeton.edu
 *! Description : Algorithm for data-driven covariate selection to validate CIA condition
 
-/*
-FUTURE release should include:
-- Algorithm on all possible combinations
-- Alternative algorithm less myopic
 
-*/
-
-
-/* 
-START HELP FILE
-
-title[Data-driven algorithm that selects covariates satisfying the CIA in a Regression Discontinuity framework.]
-
-desc[
-{cmd:ciasearch} is an algorithm that searches for a set of covariates that validates the CIA among the candidate ones (i.e. those indicated in {it:varlist}).
-The algorithm relies on the testing procedure developed by Angrist and Rokkanen (2015) in a Regression Discontinuity framework and implemented by the 
-command {help ciatest}.
-
-The algorithm adds one covariate in {it:varlist} at a time and runs {help ciatest}. Then, the covariate that minimizes a loss function based on the 
-test of the null hypothesis that the CIA holds is selected. By default the command runs the algorithm separately to the left and to the right of the 
-cutoff. If the option {cmd:unique} is specified then a single set of covariates satisfying the CIA on both sides is selected.
-
-The covariates indicated in {it:included} are always included in the testing regression.
-
-]
-
-opt[outcome specifies the dependent variable of interest.]
-opt[score specifies the running variable.]
-opt[bandwidth specifies the bandwidth to be used for estimation. The user can specify a different bandwidth for each side.]
-opt[included specifies the covariates that are always included in the testing regression.]
-opt[cutoff specifies the RD cutoff for the running variable.  Default is {cmd:c(0)}. The cutoff value is subtracted from the {it:score} variable and the bandwidth. In case multiple cutoffs are present, provide the pooled cutoff.]
-opt[poly specifies the degree of the polynomial in the running variable. The user can specify a different degree for each side. Default is {cmd:p(1 1)}.]
-opt[robust estimates heteroskedasticity-robust standard errors.]
-opt[vce clusters standard errors at the specified level.]
-opt[site specifies the variable identifying the site to add site fixed effects.]
-opt[alpha specifies the level of I-type error in the CIA test. Default is {cmd:alpha(0.1)}.]
-opt[quad adds to {it:varlist} squared terms of each (non-dichotomic) covariate in {it:varlist} and interactions of all the covariates in {it:varlist}.]
-opt[unique runs a unique algorithm on both sides. This version selects a set of covariates that satisfies the CIA condition on both sides of the
-	cutoff at the same time.]
-opt[force with this option switched on, the algorithm forgets the value of the loss function at the iteration j-1 and selects
-	the covariate providing the lower value of the loss function at iteration j. In
-	other words, with this option switched on, the algorithm searches for the covariate that
-	minimizes the loss function within a certain iteration. This can make the loss function
-	non-strictly decreasing in the number of iterations, but allows the algorithm to select
-	covariates that provide a sensible gain only after some steps.]
-opt[noprint suppresses within-iteration results.]
-
-return[selected_covs is the list of selected covariates (without those in {it:included}).]
-return[selected_covs_l is the list of selected covariates to the left of the cutoff.]
-return[selected_covs_r is the list of selected covariates to the right of the cutoff.]
-
-example[
-
-The examples below show how to correctly use the command {cmd:ciatest} to check whether the CIA holds or not. Suppose that we have at hand an
-{it:outcome} variable, a {it:score} variable, and a set of K covariates ({it:varlist}). We would like to know whether a subset of {it:varlist} 
-makes {it:score} ignorable, i.e. makes CIA hold. To do so, it is enough to run (for the sake of the example assume the bandwidth to be 10 and 
-the cutoff to be 0)
-
-{cmd:ciasearch cov1 cov2 ... covK, o(outcome) s(score) b(10)}
-
-If we suspect that there is either heteroskedasticity or intra-cluster correlation in the residuals, then
-
-{cmd:ciasearch cov1 cov2 ... covK, o(outcome) s(score) b(10) robust}
-
-{cmd:ciasearch cov1 cov2 ... covK, o(outcome) s(score) b(10) vce(clustervar)}
-
-If, in addition, we are pooling together different rankings, then we should add fixed effects at the ranking level (see Ichino and Rettore (forthcoming))
-
-{cmd:ciasearch cov1 cov2 ... covK, o(outcome) s(score) b(10) vce(clustervar) site(ranking)}
-
-If we want to add to the list also second-order covariates
-
-{cmd:ciasearch cov1 cov2 ... covK, o(outcome) s(score) b(10) vce(clustervar) site(ranking) quad}
-
-If we want some covariates to be always included
-
-{cmd:ciasearch cov1 cov2 ... covK, o(outcome) s(score) b(10) vce(clustervar) site(ranking) quad included(covI1 ... covIK)}
-
-]
-
-author[Filippo Palomba]
-institute[Department of Economics, Princeton University]
-email[fpalomba@princeton.edu]
-
-seealso[
-
-{pstd}
-Other Related Commands (ssc repository not working yet): {p_end}
-
-{synoptset 27 }{...}
-
-{synopt:{help ciatest} (if installed)} {stata ssc install ciatest}   (to install) {p_end}
-{synopt:{help ciares} (if installed)}   {stata ssc install ciares} (to install) {p_end}
-{synopt:{help ciacs} (if installed)}   {stata ssc install ciacs}     (to install) {p_end}
-{synopt:{help getaway} (if installed)} {stata ssc install getaway}   (to install) {p_end}
-{synopt:{help getawayplot}  (if installed)}   {stata ssc install getawayplot}      (to install) {p_end}
-
-{p2colreset}{...}
-
-]
-
-references[
-Angrist, J. D., & Rokkanen, M. (2015). Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff. 
-{it:Journal of the American Statistical Association}, 110(512), 1331-1344.
-]
-
-END HELP FILE 
-*/
-
-program define ciasearch, rclass
+program define ciasearch, eclass
 
 version 14.0
 	
@@ -233,7 +125,7 @@ if !mi("`unique'"){
 
 		if (`pv_r' >= `alpha') & (`pv_l' >= `alpha'){
 			disp as text "{bf: CIA condition already satisfied on both sides of the cutoff with the included covariates!}"
-			return local selected_covs `included'
+			ereturn local selected_covs `included'
 			exit
 			}
 		else {
@@ -640,10 +532,10 @@ else {
 	}
 
 
-return local selected_covs_r `selected_covs_r'    // Local containing covariates satisfying the CIA on the right
-return local selected_covs_l `selected_covs_l'    // Local containing covariates satisfying the CIA on the left
-return local CIAright `CIAright'				  // Flag equal to 1 if CIA holds on the right 
-return local CIAleft `CIAleft'                    // Flag equal to 1 if CIA holds on the left 
+ereturn local selected_covs_r `selected_covs_r'    // Local containing covariates satisfying the CIA on the right
+ereturn local selected_covs_l `selected_covs_l'    // Local containing covariates satisfying the CIA on the left
+ereturn local CIAright `CIAright'				  // Flag equal to 1 if CIA holds on the right 
+ereturn local CIAleft `CIAleft'                    // Flag equal to 1 if CIA holds on the left 
 
 
 **** Clean Leftovers

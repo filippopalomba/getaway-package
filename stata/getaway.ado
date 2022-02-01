@@ -107,11 +107,11 @@ END HELP FILE
 */
 
 
-program getaway, rclass
+program getaway, eclass
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Method(string) site(varname) ///
-			   NQuant(numlist max=2 integer) BOOTrep(integer 0)  qtleplot gphoptions(string) GENvar(string) asis]
+			   NQuant(numlist max=2 integer) BOOTrep(integer 0) qtleplot gphoptions(string) GENvar(string) asis]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb
 			   
@@ -593,21 +593,21 @@ version 14.0
 					
 		 if `strap' == 1 {
 			 if `effnq' > 0 {
-					return matrix quantiles = QTLES
+					ereturn matrix quantiles = QTLES
 				}
-			 return scalar se_eff1 = `se_eff1'
-			 return scalar se_eff0 = `se_eff0'
+			 ereturn scalar se_eff1 = `se_eff1'
+			 ereturn scalar se_eff0 = `se_eff0'
 		 }
 
 		 if "`method'" == "linear" | mi("`method'") {
-			 return matrix b1_kline = b1
-			 return matrix b0_kline = b0
+			 ereturn matrix b1_kline = b1
+			 ereturn matrix b0_kline = b0
 		 }			 
 
-		 return scalar effect1  = `effect_1'			 
-		 return scalar effect0  = `effect_0'
-		 return scalar N_T      = `N_T'			 
-		 return scalar N_C      = `N_C'
+		 ereturn scalar effect1  = `effect_1'			 
+		 ereturn scalar effect0  = `effect_0'
+		 ereturn scalar N_T      = `N_T'			 
+		 ereturn scalar N_C      = `N_C'
 		 
 		 
 		 

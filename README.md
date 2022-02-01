@@ -1,1 +1,1 @@
-getaway-package
+This repository hosts the `getaway package` for Stata that implements point estimation and inference away from the cutoff in Regression Discontinuity Designs as proposed in [Angrist and Rokkanen (2015)](https://economics.mit.edu/files/10851).
