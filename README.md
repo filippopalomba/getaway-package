@@ -1,1 +1,7 @@
-This repository hosts the `getaway package` for Stata that implements point estimation and inference away from the cutoff in Regression Discontinuity Designs as proposed in [Angrist and Rokkanen (2015)](https://economics.mit.edu/files/10851).
+# Getaway Package
+
+This repository hosts the Stata `getaway package` that implements point estimation and inference away from the cutoff in Regression Discontinuity Designs as proposed in [Angrist and Rokkanen (2015)](https://economics.mit.edu/files/10851).
+
+Angrist and Rokkanen (2015) exploit additional information contained in explanatory variables other than the score to estimate treatment effects away from the cutoff. The only assumption needed is a \`_conditional independence assumption_'' (CIA), which requires mean independence between potential outcomes and the score variable conditional on a vector of other covariates, together with a common support condition. Moreover, the CIA has implications that can be tested with standard hypothesis tests.
+
+The <tt> getaway <\tt> package which estimates treatment effects away from the cutoff as described in \cite{angrist2015} in the more general framework of RD with multiple cutoffs. The \texttt{getaway} package contains six different commands: \texttt{ciasearch} applies a data-driven algorithm that selects an adequate set of covariates to ``get away'' from the cutoff; \texttt{ciatest} tests the CIA assumption; \texttt{ciares} and \texttt{ciacs} produce graphical visualizations of the CIA assumption; \texttt{getaway} estimates parametrically treatment effects away from the cutoff; \texttt{getawayplot} shows estimated potential outcomes as functions of the score variable.
