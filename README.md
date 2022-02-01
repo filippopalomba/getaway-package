@@ -31,3 +31,5 @@ More information on how to use each command can be found in the article containe
 - Angrist, Joshua D., and Miikka Rokkanen. "Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff." _Journal of the American Statistical Association_ 110, no. 512 (2015): 1331-1344.
 
 - Fort, Margherita, Andrea Ichino, Enrico Rettore, and Giulio Zanella. "Multi-cutoff RD designs with observations located at each cutoff: problems and solutions". No. 0278. _Dipartimento di Scienze Economiche ``Marco Fanno''_, 2022.
+
+- Le Cam, Lucien. Asymptotic methods in statistical decision theory. Springer Science & Business Media, 2012.
