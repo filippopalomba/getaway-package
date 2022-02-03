@@ -1,0 +1,21 @@
+v 3
+d STATA Package: GETAWAY
+d 
+d Authors: Filippo Palomba, Department of Economics, Princeton University, cattaneo@princeton.edu
+d
+d Distribution-Date: 20220202
+d 
+f ciacs.ado
+f ciacs.sthlp
+f ciares.ado
+f ciares.sthlp
+f ciasearch.ado
+f ciasearch.sthlp
+f ciatest.ado
+f ciatest.sthlp
+f getaway.ado
+f getaway.sthlp
+f getawayplot.ado
+f getawayplot.sthlp
+f simulated_getaway.dta
+
