@@ -14,6 +14,13 @@ The <tt>getaway</tt> allows user to estimates treatment effects away from the cu
 
 More information on how to use each command can be found in the article contained in this repo.
 
+## Installation
+To install/update in Stata type
+
+```
+net install getaway, from("https://raw.githubusercontent.com/filippopalomba/getaway-package/main/stata")
+```
+
 
 ## Structure of this repository
 - stata: folder containing .ado files, help files, and a simulated dataset
