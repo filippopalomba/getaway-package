@@ -75,7 +75,7 @@ with within-bin averages of the counterfactual outcome to show the fit of the no
 
 {pstd}
 {p_end}
-{synopt:{opt nb:ins(numlist max=2  integer)}}  specifies the number of bins for which the counterfactual average is shown in the final graph. Default is {cmd:nbins(10 10)}.
+{synopt:{opt nb:ins(numlist)}}  specifies the number of bins for which the counterfactual average is shown in the final graph. Default is {cmd:nbins(10 10)}.
 
 {pstd}
 {p_end}

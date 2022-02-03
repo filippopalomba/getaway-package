@@ -25,6 +25,7 @@
 {cmd:site(}{it:varname}{cmd:)}
 {cmd:nquant(}{it:numlist}{cmd:)}
 {cmd:bootrep(}{it:#}{cmd:)}
+{cmd:clevel(}{it:#}{cmd:)}
 {cmd:qtleplot}
 {cmd:gphoptions(}{it:string}{cmd:)}
 {cmd:genvar(}{it:string}{cmd:)}
@@ -75,15 +76,23 @@ on finer intervals of the support of the running variable. The command allows to
 
 {pstd}
 {p_end}
-{synopt:{opt nq:uant(numlist max=2  integer)}}  specifies the number of quantiles in which the treatment effect must be estimated. It can be specified separately for each side. Default is {cmd:nquant(0 0)}. 
+{synopt:{opt nq:uant(numlist)}}  specifies the number of quantiles in which the treatment effect must be estimated. It can be specified separately for each side. Default is {cmd:nquant(0 0)}. 
 	To be specified if {cmd: qtleplot} is used.
+	
+{pstd}
 {p_end}
 {synopt:{opt boot:rep(#)}}  sets the number of replications of the non-parametric bootstrap. Default is {cmd:bootrep(0)}. If {cmd: site} is specified a non-parametric block bootstrap is used.
 
 {pstd}
 {p_end}
+{synopt:{opt clevel(#)}}  specifies the confidence level for the confidence intervals reported in the plot. Default is {cmd:clevel(95)}.
+
+{pstd}
+{p_end}
 {synopt:{opt qtleplot}}  plots estimated treatment effect over running variable quantiles together with bootstrapped standard errors. 
 	Also estimates and bootstrapped standard errors of the Average Treatment Effect on the Treated (ATT) and on the Non Treated (ATNT) are reported.
+	
+{pstd}
 {p_end}
 {synopt:{opt gphoptions(string)}}  specifies graphical options to be passed on to the underlying graph command.
 

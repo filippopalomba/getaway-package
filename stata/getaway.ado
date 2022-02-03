@@ -12,106 +12,11 @@ FUTURE release should include:
 	- Add cluster bootstrap
 */
 
-/* 
-START HELP FILE
-
-title[Estimate treatment effect away from the cutoff in a Sharp RDD framework.]
-
-desc[
-{cmd:getaway} uses variables contained in {it:varlist} to estimate the treatment effect away from the cutoff in a Sharp Regression Discontinuity
-framework as proposed by Angrist and Rokkanen (2015). 
-
-The command {cmd:getaway} can use either the Linear Reweighting Estimator or the Propensity Score Weighting Estimator. The average treatment effect 
-on the left and on the right of the cutoff are estimated by default. In addition, {cmd:getaway} gives the possibility to estimate the treatment effect 
-on finer intervals of the support of the running variable. The command allows to plot the estimates together with their bootstrapped standard errors.]
-
-opt[outcome specifies the dependent variable of interest.]
-opt[score specifies the running variable.]
-opt[bandwidth specifies the bandwidth to be used for estimation. The user can specify a different bandwidth for each side.]
-opt[cutoff specifies the RD cutoff for the running variable.  Default is {cmd:c(0)}. The cutoff value is subtracted from the {it:score} variable and the bandwidth. In case multiple cutoffs are present, provide the pooled cutoff.]
-opt[method allows to choose the estimation method between Linear Rewighting Estimator ({it:linear}) and Propensity Score Weighting Estimator ({it:pscore}). Default is {cmd:method(}{it:linear}{cmd:)}.]	
-opt[site specifies the variable identifying the site to add site fixed effects.]
-opt[bootrep sets the number of replications of the non-parametric bootstrap. Default is {cmd:bootrep(0)}. If {cmd: site} is specified a non-parametric block bootstrap is used.]
-opt[nquant specifies the number of quantiles in which the treatment effect must be estimated. It can be specified separately for each side. Default is {cmd:nquant(0 0)}. 
-	To be specified if {cmd: qtleplot} is used.] 
-opt[qtleplot plots estimated treatment effect over running variable quantiles together with bootstrapped standard errors. 
-	Also estimates and bootstrapped standard errors of the Average Treatment Effect on the Treated (ATT) and on the Non Treated (ATNT) are reported.]
-opt[gphoptions specifies graphical options to be passed on to the underlying graph command.]
-opt[genvar specifies the name of the variable containing the distribution of treatment effects. Only with {it:linear} option.]
-opt[asis forces retention of perfect predictor variables and their associated perfectly predicted observations in p-score estimation. To be used only with {it:pscore}.]
-
-return[N_C Number of control observation.]
-return[N_T Number of treatment observation.]
-return[effect0 Average effect on the left of the cutoff.]
-return[effect1 Average effect on the right of the cutoff.]
-return[b0_kline Estimated weight of each covariate used in CIA test (left of cutoff)]
-return[b1_kline Estimated weight of each covariate used in CIA test (right of cutoff)]
-return[se_eff0 Bootstrapped standard error of the average effect on the left of the cutoff.]
-return[se_eff1 Bootstrapped standard error of the average effect on the right of the cutoff.]
-return[quantiles Matrix containing point estimates and standard errors of the quantiles.]
-return[effect Variable containing estimated treatment effect for each observation in the sample (only linear reweighting estimator).]
-
-example[
-
-The examples below show how to correctly use the command {cmd:getaway} to estimate heterogeneous treatment effects in a sharp RDD framework. 
-Suppose that we have at hand an {it:outcome} variable, a {it:score} variable and a set of K covariates ({it:varlist}) that makes the running variable
-ignorable. For the sake of the example assume the bandwidth to be 10 and the cutoff to be 0. If we are interested in just the ATT and the ATNT , then
-
-{cmd:getaway cov1 cov2 ... covK, o(outcome) s(score) b(10)}           - using Linear Rewighting Estimator 
-
-{cmd:getaway cov1 cov2 ... covK, o(outcome) s(score) b(10) m(pscore)} - using Propensity Score Weighting Estimator
-
-If, in addition, we are pooling together different rankings, then we should add fixed effects at the site level (see Fort et al. (2022))
-
-{cmd:getaway cov1 cov2 ... covK, o(outcome) s(score) b(10) site(ranking)}
-
-If we are interested in estimating the treatment effect on 5 quantiles of the running variable on each side (10 quantiles in total) and we also want to
-estimate their standard errors with 200 repetitions of a non-parametric bootstrap, then
-
-{cmd:getaway cov1 cov2 ... covK, o(outcome) s(score) b(10) nquant(5) bootrep(200)}
-
-and if we want also a graphical representation of the estimates
-
-{cmd:getaway cov1 cov2 ... covK, o(outcome) s(score) b(10) nquant(5) bootrep(200) qtleplot}
-
-]
-
-author[Filippo Palomba]
-institute[Department of Economics, Princeton University]
-email[fpalomba@princeton.edu]
-
-
-seealso[
-
-{pstd}
-Other Related Commands (ssc repository not working yet): {p_end}
-
-{synoptset 27 }{...}
-
-{synopt:{help ciasearch} (if installed)} {stata ssc install ciasearch}   (to install) {p_end}
-{synopt:{help ciares} (if installed)}   {stata ssc install ciares} (to install) {p_end}
-{synopt:{help ciacs} (if installed)}   {stata ssc install ciacs}     (to install) {p_end}
-{synopt:{help ciatest} (if installed)} {stata ssc install ciatest}   (to install) {p_end}
-{synopt:{help getawayplot}  (if installed)}   {stata ssc install getawayplot}      (to install) {p_end}
-
-{p2colreset}{...}
-
-]
-
-references[
-Angrist, J. D., & Rokkanen, M. (2015). Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff. 
-{it:Journal of the American Statistical Association}, 110(512), 1331-1344.
-]
-
-END HELP FILE 
-*/
-
-
 program getaway, eclass
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Method(string) site(varname) ///
-			   NQuant(numlist max=2 integer) BOOTrep(integer 0) qtleplot gphoptions(string) GENvar(string) asis]
+			   NQuant(numlist max=2 integer) BOOTrep(integer 0) clevel(real 95) qtleplot gphoptions(string) GENvar(string) asis]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb
 			   
@@ -447,16 +352,19 @@ version 14.0
 			  if !mi("`qtleplot'"){
 				preserve
 					clear
+					local alp   = (100 - `clevel')/200
+					local proba = 1 - `alp'
 					svmat QTLES
-					g QTLES5 = QTLES1 - invnormal(0.975) * QTLES2
-					g QTLES6 = QTLES1 + invnormal(0.975) * QTLES2
+					
+					g QTLES5 = QTLES1 - invnormal(`proba') * QTLES2
+					g QTLES6 = QTLES1 + invnormal(`proba') * QTLES2
 					g num = _n
 					g ATT = `effect_1' 
 					g ATNT = `effect_0'
-					g ATTl = ATT - invnormal(0.975) * `se_eff1' 
-					g ATTu = ATT + invnormal(0.975) * `se_eff1'					
-					g ATNTl = ATNT - invnormal(0.975) * `se_eff0'
-					g ATNTu = ATNT + invnormal(0.975) * `se_eff0'	
+					g ATTl = ATT - invnormal(`proba') * `se_eff1' 
+					g ATTu = ATT + invnormal(`proba') * `se_eff1'					
+					g ATNTl = ATNT - invnormal(`proba') * `se_eff0'
+					g ATNTu = ATNT + invnormal(`proba') * `se_eff0'	
 					local vertbar = `nquant_l' + 0.5
 					g num2 = num
 					replace num2 = `vertbar' if num2 == `nquant_l'

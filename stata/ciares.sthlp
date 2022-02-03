@@ -69,7 +69,6 @@ If the CIA condition holds, then the plot should approximate a flat line. {p_end
 {p_end}
 {synopt:{opt site(varname)}}  specifies the variable identifying the site to add site fixed effects.
 
-
 {pstd}
 {p_end}
 {synopt:{opt gphoptions(string)}} specifies graphical options to be passed on to the underlying graph command.
