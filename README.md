@@ -29,7 +29,7 @@ net install getaway, from("https://raw.githubusercontent.com/filippopalomba/geta
 
 
 ## Examples of papers using this package:
-- [Cingano, Palomba, Pinotti, and Rettore (2022)]() - "Making Subsidies Work: Rules vs. Discretion", working paper.
+- [Cingano, Palomba, Pinotti, and Rettore (2022)](https://www.dropbox.com/s/naoxo4aal4woajd/L488_feb2022.pdf?dl=0) - "Making Subsidies Work: Rules vs. Discretion", working paper.
 
 
 
