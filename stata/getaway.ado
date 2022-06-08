@@ -52,7 +52,7 @@ version 14.0
 	        
 			 
 			 if mi("`nquant'") {
-				local nquant "0 0"
+				local nquant "5 5"
 				}
 			 tokenize `nquant'
 			 local w : word count `nquant'
@@ -197,9 +197,9 @@ version 14.0
 			 
 			 
 			 **** WITHIN-QUANTILE ESTIMATION ****
-			 
 			 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore"{       // atm pscore is not supported!!
 				local effnq = `nquant_l' + `nquant_r'
+
 			    matrix define QTLES = J(`effnq',4,.)
 				xtile `qtle_xr' = `running' if `assign'  & `running' > 0 & `running' < `band_r' & `touse',  nq(`nquant_r')  // Quantiles on the right of the cutoff
 				xtile `qtle_xl' = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse', nq(`nquant_l')  // Quantiles on the left of the cutoff
@@ -215,9 +215,9 @@ version 14.0
 				}				
 			 }
 			 
-			 ****  SE ESTIMATION WITH NON-PARAMETRIC BOOTSTRAP ****
-
+			 ****  SE ESTIMATION WITH NON-PARAMETRIC BOOTSTRAP ****			 
 			 if `bootrep' > 0 {
+			 	 cap drop boot_*
 				 set seed 8894
 				 capture: nois _dots 0, reps(`bootrep') title("Bootstrapping standard errors ...")
 				 capture: matrix define boot_M = J(`bootrep',2,.)
@@ -225,7 +225,6 @@ version 14.0
 						matrix define boot_Q = J(`bootrep',`effnq',.)
 					}
 			 
-
 			 forval iter = 1/`bootrep'{
 						nois _dots `iter' 0
 			 
@@ -263,7 +262,7 @@ version 14.0
 						matrix boot_M[`iter',2] = r(mean)					
 						
 						cap drop qtle_xrb qtle_xlb
-
+						
 						if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore"{       // atm pscore is not supported!!
 							xtile qtle_xrb = `running' if `assign'  & `running' > 0 & `running' < `band_r' & `touse',  nq(`nquant_r')  // Quantiles on the right of the cutoff
 							xtile qtle_xlb = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse', nq(`nquant_l')  // Quantiles on the left of the cutoff
@@ -335,6 +334,7 @@ version 14.0
 			  local se_eff1 = r(sd)
 			  su boot_M2 
 			  local se_eff0 = r(sd)	
+			  
      	      if `effnq' > 0 {
 			      svmat boot_Q
 				  forval qt = 1/`effnq'{   
@@ -348,7 +348,6 @@ version 14.0
 			  
  
 			  **** PLOT WITHIN-QUANTILES ESTIMATES, ATT, ATNT AND SEs ****
-			  
 			  if !mi("`qtleplot'"){
 				preserve
 					clear
@@ -399,7 +398,6 @@ version 14.0
 			 			
 				
 		  ** Prepare elements to print
-			
 			
 		  * Create rownames	for QTLES
 		  local lqt 			
@@ -517,17 +515,5 @@ version 14.0
 		 ereturn scalar N_T      = `N_T'			 
 		 ereturn scalar N_C      = `N_C'
 		 
-		 
-		 
-		 
-		 
-		 
-		 
-			 
-			 
-			 
-			 
-			 
-			 
 			 
 end
