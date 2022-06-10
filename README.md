@@ -18,7 +18,7 @@ More information on how to use each command can be found in the article containe
 To install/update in Stata type
 
 ```
-net install getaway, from("https://raw.githubusercontent.com/filippopalomba/getaway-package/main/stata")
+net install getaway, from("https://raw.githubusercontent.com/filippopalomba/getaway-package/main/stata") replace force 
 ```
 
 
