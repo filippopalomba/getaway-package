@@ -52,7 +52,7 @@ version 14.0
 	        
 			 
 			 if mi("`nquant'") {
-				local nquant "5 5"
+				local nquant "0 0"
 				}
 			 tokenize `nquant'
 			 local w : word count `nquant'
@@ -76,8 +76,8 @@ version 14.0
 			 if `bootrep' != 0 {
 				local strap = 1
 				}
-			
-			 if !mi("`qtleplot'") & `bootrep' == 0 {  // In order to plot within-quantile estimates with SE bootrep must be specified
+				
+			 if (!mi("`qtleplot'") & `bootrep' == 0) {  // In order to plot within-quantile estimates with SE bootrep must be specified
 				di as error "Please specify a number of bootstrap iterations!"
 				exit
 				}
@@ -400,45 +400,50 @@ version 14.0
 		  ** Prepare elements to print
 			
 		  * Create rownames	for QTLES
-		  local lqt 			
-		  forval qt = 1/`nquant_l'{
-			local aux = strtoname("Left `qt'")
-			local lqt `lqt' `aux'
-		  }     
-		  forval qt = 1/`nquant_r'{
-			local aux = strtoname("Right `qt'")
-			local lqt `lqt' `aux'
-		  }     								  
-		  
-		  * Store intervals of running variables
-		  local qttot = 1
-		  forval qt = 1/`nquant_l'{
-		  	qui su `running' if `qtle_xl' == `qt'
-			matrix QTLES[`qttot', 3] = r(min)
-			matrix QTLES[`qttot', 4] = r(max)
-			local qttot = `qttot' + 1
+		  if (`nquant_l' > 0 & `nquant_r' > 0) {
+			  local lqt 			
+			  forval qt = 1/`nquant_l'{
+				local aux = strtoname("Left `qt'")
+				local lqt `lqt' `aux'
+			  }     
+			  forval qt = 1/`nquant_r'{
+				local aux = strtoname("Right `qt'")
+				local lqt `lqt' `aux'
+			  }     								  
+			  
+			  * Store intervals of running variables
+			  local qttot = 1
+			  forval qt = 1/`nquant_l'{
+				qui su `running' if `qtle_xl' == `qt'
+				matrix QTLES[`qttot', 3] = r(min)
+				matrix QTLES[`qttot', 4] = r(max)
+				local qttot = `qttot' + 1
+			  }
+			  forval qt = 1/`nquant_r'{
+				qui su `running' if `qtle_xr' == `qt'
+				matrix QTLES[`qttot', 3] = r(min)
+				matrix QTLES[`qttot', 4] = r(max)
+				local qttot = `qttot' + 1
+			  }
+			  
+			  * Round QTLES matrix
+			  mata : Mrounded=round(st_matrix("QTLES"),.001) 
+			  mata : st_matrix("QTLESr",Mrounded)
+			  matrix rownames QTLES = `lqt'
+			  matrix rownames QTLESr = `lqt'
+			  matrix colnames QTLESr = Estimate SE Xlb Xub
 		  }
-		  forval qt = 1/`nquant_r'{
-		  	qui su `running' if `qtle_xr' == `qt'
-			matrix QTLES[`qttot', 3] = r(min)
-			matrix QTLES[`qttot', 4] = r(max)
-			local qttot = `qttot' + 1
-		  }
-		  
-		  * Round QTLES matrix
-		  mata : Mrounded=round(st_matrix("QTLES"),.001) 
-		  mata : st_matrix("QTLESr",Mrounded)
-		  matrix rownames QTLES = `lqt'
-		  matrix rownames QTLESr = `lqt'
-		  matrix colnames QTLESr = Estimate SE Xlb Xub
-		  
+
+
 		  * Prepare matrix with main causal estimates
 		  matrix define params = J(2,2,.)
 		  matrix params[2,1] = `effect_1'
 		  matrix params[1,1] = `effect_0'
-		  matrix params[2,2] = `se_eff1'
-		  matrix params[1,2] = `se_eff0'
-		  
+		  if `bootrep' > 0 {
+			  matrix params[2,2] = `se_eff1'
+			  matrix params[1,2] = `se_eff0'
+		  }
+	  
 		  mata : Prounded=round(st_matrix("params"),.001) 		 
 		  mata : st_matrix("paramsr",Prounded)
 		  matrix colnames paramsr = Estimate SE
@@ -455,7 +460,7 @@ version 14.0
 		  if mi("`method'") {
 		  	local method = "linear"
 		  } 
-		  
+
 		  * Print results
 		  di as text ""
 		  di as text "{hline 80}"
@@ -480,10 +485,13 @@ version 14.0
 		  di as text ""
 		  di as text "{it: Main Estimates}"
 		  matrix list paramsr, noblank noheader format(%4.3f)
-		  
-		  di as text ""
-		  di as text "{it: Within-Quantile Estimates}"
-		  matrix list QTLESr, noblank noheader format(%4.3f)
+			  di as error "salvino"
+	  
+		  if (`nquant_l' > 0 & `nquant_r' > 0) {
+			  di as text ""
+			  di as text "{it: Within-Quantile Estimates}"
+			  matrix list QTLESr, noblank noheader format(%4.3f)
+		  }
 
 		  di as text ""
 		  di as text "CIA Covariates: `varlist'"
