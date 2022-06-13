@@ -485,7 +485,6 @@ version 14.0
 		  di as text ""
 		  di as text "{it: Main Estimates}"
 		  matrix list paramsr, noblank noheader format(%4.3f)
-			  di as error "salvino"
 	  
 		  if (`nquant_l' > 0 & `nquant_r' > 0) {
 			  di as text ""
