@@ -24,6 +24,8 @@
 {cmd:kernel(}{it:string}{cmd:)}
 {cmd:site(}{it:varname}{cmd:)}
 {cmd:nbins(}{it:numlist}{cmd:)}
+{cmd:clevel(}{it:#}{cmd:)}
+{cmd:nose}
 {cmd:gphoptions(}{it:string}{)}]{p_end}
 
 {synoptset 28 tabbed}{...}
@@ -76,6 +78,14 @@ with within-bin averages of the counterfactual outcome to show the fit of the no
 {pstd}
 {p_end}
 {synopt:{opt nb:ins(numlist)}}  specifies the number of bins for which the counterfactual average is shown in the final graph. Default is {cmd:nbins(10 10)}.
+
+{pstd}
+{p_end}
+{synopt:{opt clevel(#)}}  specifies the confidence level for the confidence intervals reported in the plot. Default is {cmd:clevel(95)}.
+
+{pstd}
+{p_end}
+{synopt:{opt nose}}  if specified standard errors are not computed and plotted.
 
 {pstd}
 {p_end}
