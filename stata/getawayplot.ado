@@ -130,7 +130,6 @@ version 14.0
 			 ** Plot of Actual and Counterfactual Regression Function
 			 
 			 if (mi("`nose'")) {
-			 	di as error "ue"
 				 graph twoway  ///
 				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0, fcolor(red%25) lwidth(none))					      ///
 				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, fcolor(red%25) lwidth(none))                       ///
