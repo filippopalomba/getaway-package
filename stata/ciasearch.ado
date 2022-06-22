@@ -9,7 +9,7 @@ program define ciasearch, eclass
 
 version 14.0
 	
-syntax varlist(min = 1) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) included(varlist fv) Poly(numlist max=2 integer) ///
+syntax varlist(min = 1  ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) included(varlist fv) Poly(numlist max=2 integer) ///
 									 ROBust vce(varname) site(varname) alpha(real 0.1) quad unique force NOPrint]	
 
 ******************************************									 
@@ -199,8 +199,9 @@ if !mi("`unique'"){
 			
 			* Test the CIA over the set of candidate variables
 			foreach covar of local candidates{   
-				qui ciatest `included' `covar' `selected_covs' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' noise
-				matrix _T = r(cia_test)
+				qui ciatest `included' `covar' `selected_covs' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') ///
+							cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' 
+				matrix _T = e(cia_test)
 				local pvalpos = rownumb(_T,"p-value")
 				local pv_l = _T[`pvalpos',1]      // Store p-value on the left
 				local pv_r = _T[`pvalpos',2]      // Store p-value on the right
@@ -264,7 +265,7 @@ if mi("`unique'"){
 		
 		qui ciatest `included' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') cutoff(`cutoff') poly(`poly') ///
 										   `SEs' `fixedeff' `significance' 									   
-		matrix _T = r(cia_test)
+		matrix _T = e(cia_test)
 		local pvalpos = rownumb(_T,"p-value")
 		local loss_fun_max_l = _T[`pvalpos',1]      // Store p-value on the left
 		local loss_fun_max_r = _T[`pvalpos',2]      // Store p-value on the right
@@ -381,7 +382,7 @@ if mi("`unique'"){
 
 				qui ciatest `included' `covar' `selected_covs_l' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') ///
 																	cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' 	
-				matrix _T = r(cia_test)
+				matrix _T = e(cia_test)
 				local pvalpos = rownumb(_T,"p-value")
 				local actual_loss_fun_l = _T[`pvalpos',1]      // Store p-value on the left
 				matrix drop _T
@@ -435,7 +436,7 @@ if mi("`unique'"){
 			* Test the CIA over the set of candidate variables
 			foreach covar of local candidates_r{   
 				qui ciatest `included' `covar' `selected_covs_r' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' 																	   
-				matrix _T = r(cia_test)
+				matrix _T = e(cia_test)
 				local pvalpos = rownumb(_T,"p-value")
 				local actual_loss_fun_r = _T[`pvalpos',2]         // Store p-value on the right
 				matrix drop _T
