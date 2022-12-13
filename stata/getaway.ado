@@ -1,4 +1,4 @@
-*! Date        : 17 Jan 2022
+*! Date        : 13 Dec 2022
 *! Version     : 0.5
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
@@ -54,6 +54,7 @@ version 14.0
 			 if mi("`nquant'") {
 				local nquant "0 0"
 				}
+
 			 tokenize `nquant'
 			 local w : word count `nquant'
 			 
@@ -334,8 +335,8 @@ version 14.0
 			  local se_eff1 = r(sd)
 			  su boot_M2 
 			  local se_eff0 = r(sd)	
-			  
-     	      if `effnq' > 0 {
+
+     	      if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore" > 0 {
 			      svmat boot_Q
 				  forval qt = 1/`effnq'{   
 						su boot_Q`qt'
@@ -505,7 +506,7 @@ version 14.0
 					
 					
 		 if `strap' == 1 {
-			 if `effnq' > 0 {
+			 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore" > 0 {
 					ereturn matrix quantiles = QTLES
 				}
 			 ereturn scalar se_eff1 = `se_eff1'
