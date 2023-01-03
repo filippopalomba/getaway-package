@@ -87,7 +87,7 @@ disp as text "Algorithm Path:"
 di as text""
 qui ciatest `varlist' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' `significance' 
 
-if r(CIAalready) == 1{
+if e(CIAalready) == 1{
 	local alphaperc = `alpha'*100
 	display as text "{bf:Notice that the CIA condition is already satisfied without covariates!}"
 	display as text "{bf:You can treat the RDD as a random experiment within the actual bandwidth}"
@@ -115,14 +115,14 @@ if !mi("`unique'"){
 		disp as text "Checking that CIA is not already verified with always included covariates..."
 		
 		ciatest `included' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' `significance' 
-		matrix _T = r(cia_test)
+		matrix _T = e(cia_test)
 		local pvalpos = rownumb(_T,"p-value")
 		local pv_l = _T[`pvalpos',1]      // Store p-value on the left
 		local pv_r = _T[`pvalpos',2]      // Store p-value on the right
 		matrix drop _T
 			
 		local loss_fun_max = min(`pv_l',`pv_r')   
-
+		
 		if (`pv_r' >= `alpha') & (`pv_l' >= `alpha'){
 			disp as text "{bf: CIA condition already satisfied on both sides of the cutoff with the included covariates!}"
 			ereturn local selected_covs `included'

@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.1 2022-01-25}{...}
+{* *!version 0.5 2023-01-03}{...}
 {viewerjumpto "Syntax" "ciasearch##syntax"}{...}
 {viewerjumpto "Description" "ciasearch##description"}{...}
 {viewerjumpto "Options" "ciasearch##options"}{...}
@@ -73,7 +73,7 @@ cutoff. If the option {cmd:unique} is specified then a single set of covariates 
 
 {pstd}
 {p_end}
-{synopt:{opt included(varlist)}}  specifies the degree of the polynomial in the running variable. The user can specify a different degree for each side. Default is {cmd:p(1 1)}.
+{synopt:{opt included(varlist)}} specifies the covariates that are always included.
 
 {pstd}
 {p_end}

@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.1 2022-01-25}{...}
+{* *!version 0.5 2023-01-03}{...}
 {viewerjumpto "Syntax" "getawayplot##syntax"}{...}
 {viewerjumpto "Description" "getawayplot##description"}{...}
 {viewerjumpto "Options" "getawayplot##options"}{...}
@@ -81,7 +81,7 @@ with within-bin averages of the counterfactual outcome to show the fit of the no
 
 {pstd}
 {p_end}
-{synopt:{opt clevel(#)}}  specifies the confidence level for the confidence intervals reported in the plot. Default is {cmd:clevel(95)}.
+{synopt:{opt clevel(#)}}  specifies the confidence level for the confidence bands reported in the plot. Default is {cmd:clevel(95)}.
 
 {pstd}
 {p_end}

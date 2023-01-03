@@ -1,10 +1,21 @@
-v 3
-d STATA Package: GETAWAY
-d 
-d Authors: Filippo Palomba, Department of Economics, Princeton University, fpalomba@princeton.edu
+v 0.5
+d {bf:GETAWAY}: A Stata package for regression discontinuity designs away from the cutoff.
+d See {bf:help getaway} after installation.
 d
-d Distribution-Date: 20221213
+d Requires: Stata version 13 or higher.
+d
+d KW: Stata
+d KW: regression discontinuity
+d KW: causal inference
+d
+d This  version: 03 Jan 2023
+d First version: 24 Sep 2019
+d License: MIT
 d 
+d Distribution-Date: 20230103
+d 
+d Author: Filippo Palomba, Department of Economics, Princeton University, fpalomba@princeton.edu
+d
 f ciacs.ado
 f ciacs.sthlp
 f ciares.ado

@@ -1,6 +1,6 @@
-v 3
-d GETAWAY: Point estimation and inference away from the cutoff in Regression Discontinuity designs
-d          https://github.com/filippopalomba/getaway-package
-d
-
+v 0.5
+d 'GETAWAY': Point estimation and inference away from the cutoff in Regression Discontinuity designs
+d Filippo Palomba
+d fpalomba@princeton.edu
+d https://github.com/filippopalomba/getaway-package
 p getaway
