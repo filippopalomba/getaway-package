@@ -1,4 +1,4 @@
-*! Date        : 13 Dec 2022
+*! Date        : 05 Mar 2023
 *! Version     : 0.5
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
@@ -8,20 +8,27 @@
 FUTURE release should include:
 	- Extension of PSW estimation to quantiles.
 	- Merge with the fuzzy version
-	- Add a table for printing results
-	- Add cluster bootstrap
 */
 
 program getaway, eclass
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Method(string) site(varname) ///
-			   NQuant(numlist max=2 integer) BOOTrep(integer 0) clevel(real 95) qtleplot gphoptions(string) GENvar(string) asis]
+			   NQuant(numlist max=2 integer) BOOTrep(integer 0) clevel(real 95) reghd qtleplot gphoptions(string) GENvar(string) asis]
 
-		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb
+		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb FE d xb
 			   
 	    qui {
-		
+			 
+			 if !mi("`reghd'") {
+				 capture which reghdfe, all
+				 if _rc != 0 {
+					noisily{ 
+						di "Installing reghdfe!"
+						ssc install reghdfe
+					}
+				 }			 	
+			 }
 		
 			 marksample touse, novarlist       // marksample just for "if" and "in" conditions
 
@@ -114,16 +121,30 @@ version 14.0
 				 
 				 }			 
 			 if !mi("`site'") {                                 // With FEs
-*				 reg `outcome' `varlist' i.`site' if `running' >= 0 & `running' <= `bandwidth' & `touse'		// right
-				 areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site') 		// right
-*				 reghdfe `outcome' `varlist' if `running' >= 0 & `running' <= `bandwidth' & `touse', a(`site')  resid		// right
-				 matrix b1 = e(b)
-				 predict `pred1' if !missing(`outcome'), xb   				 
-*				 reg `outcome' `varlist' i.`site' if `running' < 0 & `running' > - `bandwidth' & `touse'		// left
-				 areg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`site') 
-*				 reghdfe `outcome' `varlist' if `running' < 0 & `running' > -`bandwidth' & `touse', a(`site') resid		// right
-				 matrix b0 = e(b)
-				 predict `pred0' if !missing(`outcome'), xb
+				 if mi("`reghd'") {
+					 areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site') 		    // right
+					 matrix b1 = e(b)
+					 predict `pred1' if !missing(`outcome'), xb
+					 areg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`site') 
+					 matrix b0 = e(b)
+					 predict `pred0' if !missing(`outcome'), xb
+				 }
+				 else {
+					 reghdfe `outcome' `varlist' if `running' >= 0 & `running' <= `band_r' & `touse', a(`FE'=`site') 	// right
+					 matrix b1 = e(b)
+					 predict `xb' if !missing(`outcome'), xb
+					 bys `site': egen `d' = max(`FE')
+					 gen `pred1' = `xb' + `d'
+					 drop `d' `xb' `FE'
+				 	
+					 reghdfe `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`FE'=`site')		// right
+					 matrix b0 = e(b)
+					 predict `xb' if !missing(`outcome'), xb
+					 bys `site': egen `d' = max(`FE')
+					 gen `pred0' = `xb' + `d'
+					 drop `d' `xb' `FE'
+				 }
+				 
 				 
 				 }				 
 		 
@@ -142,11 +163,11 @@ version 14.0
 			 
 			 
 				 
-			 g `effect' = `pred1' - `pred0' if `running' < `band_r' & `running' > `band_l'  // Estimate TE distribution
-			 su `effect' if `assign' & `running' < `band_r'  & `touse'
+			 g `effect' = `pred1' - `pred0' if `touse' & `running' > `band_l' & `running' < `band_r'  // Estimate TE distribution
+			 su `effect' if `assign'
 			 local effect_1 = r(mean)                   // Average Effect on the Right
 			 local N_T = r(N)
-			 su `effect' if !`assign' & `running' > `band_l' & `touse'
+			 su `effect' if !`assign'
 			 local effect_0 = r(mean)			        // Average Effect on the Left
 			 local N_C = r(N)
 			 }
@@ -246,14 +267,29 @@ version 14.0
 							reg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse'                 // left
 							predict `pred0b' if !missing(`outcome'), xb
 							}
+							
 						if !mi("`site'") {                                 // With FEs
-			*				reg `outcome' `varlist' i.`site' if `running' >= 0 & `running' <= `bandwidth' & `touse'		// right
-							areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site')		// right
-							predict `pred1b' if !missing(`outcome'), xb   
-			*				reg `outcome' `varlist' i.`site' if `running' < 0 & `running' > - `bandwidth' & `touse'		// left
-							areg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`site') 
-							predict `pred0b' if !missing(`outcome'), xb
-							}				 
+							if mi("`reghd'") {
+								areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site')		// right
+								predict `pred1b' if !missing(`outcome'), xb
+								areg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`site') 
+								predict `pred0b' if !missing(`outcome'), xb
+							}
+							else {
+								reghdfe `outcome' `varlist' if `running' >= 0 & `running' <= `band_r' & `touse', a(`FE'=`site') 	// right
+								predict `xb' if !missing(`outcome'), xb
+								bys `site': egen `d' = max(`FE')
+								gen `pred1b' = `xb' + `d'
+								drop `d' `xb' `FE'
+								
+								reghdfe `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`FE'=`site') 	
+								predict `xb' if !missing(`outcome'), xb
+								bys `site': egen `d' = max(`FE')
+								gen `pred0b' = `xb' + `d'
+								drop `d' `xb' `FE'								
+							}
+							 
+						}				 
 
 						gen `effectb' = `pred1b'-`pred0b' 
 

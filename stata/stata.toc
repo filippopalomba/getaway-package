@@ -1,4 +1,4 @@
-v 0.5
+v 0.6
 d 'GETAWAY': Point estimation and inference away from the cutoff in Regression Discontinuity designs
 d Filippo Palomba
 d fpalomba@princeton.edu

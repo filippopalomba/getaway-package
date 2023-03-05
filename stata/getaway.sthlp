@@ -26,6 +26,7 @@
 {cmd:nquant(}{it:numlist}{cmd:)}
 {cmd:bootrep(}{it:#}{cmd:)}
 {cmd:clevel(}{it:#}{cmd:)}
+{cmd:reghd}
 {cmd:qtleplot}
 {cmd:gphoptions(}{it:string}{cmd:)}
 {cmd:genvar(}{it:string}{cmd:)}
@@ -81,15 +82,20 @@ on finer intervals of the support of the running variable. The command allows to
 	
 {pstd}
 {p_end}
-{synopt:{opt boot:rep(#)}}  sets the number of replications of the non-parametric bootstrap. Default is {cmd:bootrep(0)}. If {cmd: site} is specified a non-parametric block bootstrap is used.
+{synopt:{opt boot:rep(#)}} sets the number of replications of the non-parametric bootstrap. Default is {cmd:bootrep(0)}. If {cmd: site} is specified a non-parametric block bootstrap is used.
 
 {pstd}
 {p_end}
-{synopt:{opt clevel(#)}}  specifies the confidence level for the confidence intervals reported in the plot. Default is {cmd:clevel(95)}.
+{synopt:{opt clevel(#)}} specifies the confidence level for the confidence intervals reported in the plot. Default is {cmd:clevel(95)}.
 
 {pstd}
 {p_end}
-{synopt:{opt qtleplot}}  plots estimated treatment effect over running variable quantiles together with bootstrapped standard errors. 
+{synopt:{opt reghd}} allows site fixed effects to differ on each side of the cutoff. If the number of
+observations per ranking is not sufficiently high might yield inconsistent estimates for the treatment effects away from the cutoff. It relies on the command {help reghdfe:reghdfe}.
+
+{pstd}
+{p_end}
+{synopt:{opt qtleplot}} plots estimated treatment effect over running variable quantiles together with bootstrapped standard errors. 
 	Also estimates and bootstrapped standard errors of the Average Treatment Effect on the Treated (ATT) and on the Non Treated (ATNT) are reported.
 	
 {pstd}
@@ -114,9 +120,6 @@ on finer intervals of the support of the running variable. The command allows to
 {p 8 8}{cmd:use simulated_getawayplot.dta}{p_end}
 
 {p 4 8}Prepare data{p_end}
-{p 8 8}{cmd:generate X2 = X^2}{p_end}
-{p 8 8}{cmd:generate interaction = X*T}{p_end}
-{p 8 8}{cmd:generate interaction2 = X2*T}{p_end}
 {p 8 8}{cmd:generate w1sq = w1^2}{p_end}
 {p 8 8}{cmd:generate w2sq = w2^2}{p_end}
 {p 8 8}{cmd:generate w2Xw1 = w2*w1}{p_end}
@@ -152,6 +155,8 @@ on finer intervals of the support of the running variable. The command allows to
 
 {p 4 8}Angrist, Joshua D., and Miikka Rokkanen. {browse "https://economics.mit.edu/files/10851":Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff.} 
 {it:Journal of the American Statistical Association} 110.512 (2015): 1331-1344.{p_end}
+
+{p 4 8}Sergio Correia. {browse "http://scorreia.com/research/hdfe.pdf" reghdfe: Stata module for linear and instrumental-variable/GMM regression absorbing multiple levels of fixed effects.}{it:Statistical Software Components s457874}, Boston College Department of Economics (2017).{p_end}
 
 {marker authors}{...}
 {title:Authors}
