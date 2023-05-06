@@ -207,19 +207,19 @@ version 14.0
 					`model' `assign' `varlist' i.`site' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
 				}
 				
-				tempvar ATNT ATT
+				tempvar ATNT ATT pred_p
 				
-				predict pred_p if e(sample) 
-				replace pred_p = . if pred_p < `psLow' | pred_p > `psHigh'  // trim pscore
+				predict `pred_p' if e(sample) 
+				replace `pred_p' = . if `pred_p' < `psLow' | `pred_p' > `psHigh'  // trim pscore
 
-				su `assign' if !mi(pred_p)
+				su `assign' if !mi(`pred_p')
 				local p = r(mean)
 				
-				g `ATNT' = `outcome' * (`assign' - pred_p)/(pred_p*(1-`p'))
+				g `ATNT' = `outcome' * (`assign' - `pred_p')/(`pred_p'*(1-`p'))
 				su `ATNT'
 				local effect_0 = r(mean)
 				
-				g `ATT' = `outcome' * (`assign' - pred_p)/((1-pred_p)*`p')	
+				g `ATT' = `outcome' * (`assign' - `pred_p')/((1-`pred_p')*`p')	
 				su `ATT'
 				local effect_1 = r(mean)
 				
@@ -256,13 +256,13 @@ version 14.0
 			 	local effnq = `nquant_l' + `nquant_r'
 				
 			    matrix define QTLES = J(`effnq',4,.)
-				xtile `qtle_xr' = `running' if `assign' & `running' > 0 & `running' < `band_r' & `touse' & !mi(pred_p),  nq(`nquant_r')  // Quantiles on the right of the cutoff
-				xtile `qtle_xl' = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse' & !mi(pred_p), nq(`nquant_l')  // Quantiles on the left of the cutoff
+				xtile `qtle_xr' = `running' if `assign' & `running' > 0 & `running' < `band_r' & `touse' & !mi(`pred_p'),  nq(`nquant_r')  // Quantiles on the right of the cutoff
+				xtile `qtle_xl' = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse' & !mi(`pred_p'), nq(`nquant_l')  // Quantiles on the left of the cutoff
  	
 				forval qt = 1/`nquant_l' {
 					cap drop __inQt __teQt
-					su `running' if `qtle_xl' == `qt' & `touse' & !mi(`outcome') & !mi(pred_p)
-					g __inQt = `running' >= r(min) & `running' <= r(max) if `touse' & !mi(`outcome') & !mi(pred_p)
+					su `running' if `qtle_xl' == `qt' & `touse' & !mi(`outcome') & !mi(`pred_p')
+					g __inQt = `running' >= r(min) & `running' <= r(max) if `touse' & !mi(`outcome') & !mi(`pred_p')
 					
 					if mi("`site'") {                   // Compute probability of being in quantile
 						`model' __inQt `varlist' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
@@ -274,7 +274,7 @@ version 14.0
 					su __inQt 
 					local pQt = r(mean)
 					
-					g __teQt = `outcome' * ( (`assign' - pred_p) / (pred_p * ( 1-pred_p)) ) * (__pscoreQt_L`qt' / `pQt')
+					g __teQt = `outcome' * ( (`assign' - `pred_p') / (`pred_p' * ( 1-`pred_p')) ) * (__pscoreQt_L`qt' / `pQt')
 					su __teQt
 					matrix QTLES[`qt', 1] = r(mean)
 					
@@ -282,8 +282,8 @@ version 14.0
 
 				forval qt = 1/`nquant_r' {
 					cap drop __inQt __teQt
-					su `running' if `qtle_xr' == `qt' & `touse' & !mi(`outcome') & !mi(pred_p)
-					g __inQt = `running' >= r(min) & `running' <= r(max) if `touse' & !mi(`outcome') & !mi(pred_p)
+					su `running' if `qtle_xr' == `qt' & `touse' & !mi(`outcome') & !mi(`pred_p')
+					g __inQt = `running' >= r(min) & `running' <= r(max) if `touse' & !mi(`outcome') & !mi(`pred_p')
 					
 					if mi("`site'") {                   // Compute probability of being in quantile
 						`model' __inQt `varlist' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
@@ -295,7 +295,7 @@ version 14.0
 					su __inQt 
 					local pQt = r(mean)
 					
-					g __teQt = `outcome' * ( (`assign' - pred_p) / (pred_p * ( 1-pred_p)) ) * (__pscoreQt_R`qt' / `pQt')
+					g __teQt = `outcome' * ( (`assign' - `pred_p') / (`pred_p' * ( 1-`pred_p')) ) * (__pscoreQt_R`qt' / `pQt')
 					su __teQt
 					
 					local qtt = `qt' + `nquant_l'
