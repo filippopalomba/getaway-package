@@ -1,5 +1,5 @@
-*! Date        : 05 Mar 2023
-*! Version     : 0.5
+*! Date        : 06 May 2023
+*! Version     : 0.6
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Estimate Heterogeneous TEs in Sharp RDD
@@ -14,7 +14,8 @@ program getaway, eclass
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Method(string) site(varname) ///
-			   NQuant(numlist max=2 integer) BOOTrep(integer 0) clevel(real 95) reghd qtleplot gphoptions(string) GENvar(string) asis]
+			   NQuant(numlist max=2 integer) probit trimming(string) BOOTrep(integer 0) clevel(real 95) reghd qtleplot             ///
+			   gphoptions(string) GENvar(string) asis]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb FE d xb
 			   
@@ -75,10 +76,38 @@ version 14.0
 			    }
 			 
 			 
-			 if "`method'" == "pscore" {             // atm pscore does not support quantile estimation
+			 if "`method'" == "pscore" {             
+			 	** atm pscore does not support quantile estimation
 				local effnq = 0
+				
+				
+				** Select probability model
+				if mi("`probit'") {
+					local model "logit"
+					}
+				else if !mi("`probit'") {
+					local model "probit"
+					}
+
+				** specify trimming parameters
+				if mi("`trimming'") {
+					local psLow = 0.1
+					local psHigh = 0.9
 				}
-			
+				else {
+					tokenize `trimming'
+					local w : word count `trimming'
+					
+					if `w' < 2 {
+						di as error "{err}{cmd:trimming() need two inputs!}"
+						exit 125
+					}
+					else {
+						local psLow = `"`1'"'
+						local psHigh = `"`2'"'
+					}
+				}
+			 }
 			
 			 local strap = 0
 			 if `bootrep' != 0 {
@@ -89,12 +118,6 @@ version 14.0
 				di as error "Please specify a number of bootstrap iterations!"
 				exit
 				}
-								
-			 if (`nquant_l' > 0 & `nquant_r' > 0) & `bootrep' == 0 {       // In order to report within-quantile estimates with SE bootrep must be specified
-				di as error "Please specify a number of bootstrap iterations!"
-				exit
-				}
-				
 				
 			 if !mi("`genvar'") {                     // Check that the name for the new variable has not been already taken!
 				capture confirm variable `genvar'
@@ -178,48 +201,39 @@ version 14.0
 			 else if "`method'" == "pscore" {		    
 
 				if mi("`site'") {                   // Compute pscore
-					logit `assign' `varlist' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
-					}
+					`model' `assign' `varlist' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
+				}
 				if !mi("`site'") {
-					logit `assign' `varlist' i.`site' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
-					}
-				 
-				predict pred_p if e(sample)
+					`model' `assign' `varlist' i.`site' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
+				}
 				
+				tempvar ATNT ATT
+				
+				predict pred_p if e(sample) 
+				replace pred_p = . if pred_p < `psLow' | pred_p > `psHigh'  // trim pscore
+
 				su `assign' if !mi(pred_p)
 				local p = r(mean)
 				
-				gen w0 = (1 - `assign')/(1 - pred_p)
-				gen w1 = `assign'/pred_p
-				
-				gen w00 = w0*((1 - pred_p)/(1 - `p'))
-				gen w10 = w1*((1 - pred_p)/(1 - `p'))
-				
-				gen w01 = w0*(pred_p/`p')
-				gen w11 = w1*(pred_p/`p')
-								
-				foreach w in w00 w10 w01 w11 {
-					su `w' if !mi(`outcome')
-					replace `w' = `w'/r(mean)
-				}
-				noisily{
-				gen temp = (w10 - w00)*`outcome'
-				su temp 
+				g `ATNT' = Y * (T - pred_p)/(pred_p*(1-`p'))
+				su `ATNT'
 				local effect_0 = r(mean)
-				drop temp
 				
-				gen temp = (w11 - w01)*`outcome'
-				su temp 
+				g `ATT' = Y * (T - pred_p)/((1-pred_p)*`p')	
+				su `ATT'
 				local effect_1 = r(mean)
-				drop temp
-				}
-				drop pred_p w0 w1 w00 w10 w01 w11
+				
+				su `ATT' if `assign'
+				local N_T = r(N)
+				su `ATT' if `assign'
+				local N_C = r(N)
 			}	
 
 			 
 			 
 			 **** WITHIN-QUANTILE ESTIMATION ****
-			 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore"{       // atm pscore is not supported!!
+			 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" == "linear" { 
+			 	
 				local effnq = `nquant_l' + `nquant_r'
 
 			    matrix define QTLES = J(`effnq',4,.)
@@ -237,13 +251,71 @@ version 14.0
 				}				
 			 }
 			 
+			 else if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" == "pscore" {
+			 	
+			 	local effnq = `nquant_l' + `nquant_r'
+				
+			    matrix define QTLES = J(`effnq',4,.)
+				xtile `qtle_xr' = `running' if `assign' & `running' > 0 & `running' < `band_r' & `touse' & !mi(pred_p),  nq(`nquant_r')  // Quantiles on the right of the cutoff
+				xtile `qtle_xl' = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse' & !mi(pred_p), nq(`nquant_l')  // Quantiles on the left of the cutoff
+ 	
+				forval qt = 1/`nquant_l' {
+					cap drop __inQt __teQt
+					su `running' if `qtle_xl' == `qt' & `touse' & !mi(`outcome') & !mi(pred_p)
+					g __inQt = `running' >= r(min) & `running' <= r(max) if `touse' & !mi(`outcome') & !mi(pred_p)
+					
+					if mi("`site'") {                   // Compute probability of being in quantile
+						`model' __inQt `varlist' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
+					}
+					if !mi("`site'") {
+						`model' __inQt `varlist' i.`site' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
+					}
+					predict __pscoreQt_L`qt' if e(sample)
+					su __inQt 
+					local pQt = r(mean)
+					
+					g __teQt = `outcome' * ( (`assign' - pred_p) / (pred_p * ( 1-pred_p)) ) * (__pscoreQt_L`qt' / `pQt')
+					su __teQt
+					matrix QTLES[`qt', 1] = r(mean)
+					
+				}
+
+				forval qt = 1/`nquant_r' {
+					cap drop __inQt __teQt
+					su `running' if `qtle_xr' == `qt' & `touse' & !mi(`outcome') & !mi(pred_p)
+					g __inQt = `running' >= r(min) & `running' <= r(max) if `touse' & !mi(`outcome') & !mi(pred_p)
+					
+					if mi("`site'") {                   // Compute probability of being in quantile
+						`model' __inQt `varlist' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
+					}
+					if !mi("`site'") {
+						`model' __inQt `varlist' i.`site' if !mi(`outcome') & `running' < `band_r' & `running' > `band_l' & `touse',  `asis'
+					}
+					predict __pscoreQt_R`qt' if e(sample)
+					su __inQt 
+					local pQt = r(mean)
+					
+					g __teQt = `outcome' * ( (`assign' - pred_p) / (pred_p * ( 1-pred_p)) ) * (__pscoreQt_R`qt' / `pQt')
+					su __teQt
+					
+					local qtt = `qt' + `nquant_l'
+					matrix QTLES[`qtt', 1] = r(mean)
+					
+				}				
+				
+				
+			 } 
+			 
+			 
+			 
+			 
 			 ****  SE ESTIMATION WITH NON-PARAMETRIC BOOTSTRAP ****			 
 			 if `bootrep' > 0 {
 			 	 cap drop boot_*
 				 set seed 8894
 				 capture: nois _dots 0, reps(`bootrep') title("Bootstrapping standard errors ...")
 				 capture: matrix define boot_M = J(`bootrep',2,.)
-				 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore"{
+				 if (`nquant_l' > 0 & `nquant_r' > 0) {
 						matrix define boot_Q = J(`bootrep',`effnq',.)
 					}
 			 
@@ -261,62 +333,61 @@ version 14.0
 						** a) Linear Reweighting Estimator
 						
 						if "`method'" == "linear" | mi("`method'") {
-						if mi("`site'") {
-							reg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse'			  // right
-							predict `pred1b' if !missing(`outcome'), xb   
-							reg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse'                 // left
-							predict `pred0b' if !missing(`outcome'), xb
-							}
-							
-						if !mi("`site'") {                                 // With FEs
-							if mi("`reghd'") {
-								areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site')		// right
-								predict `pred1b' if !missing(`outcome'), xb
-								areg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`site') 
+							if mi("`site'") {
+								reg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse'			  // right
+								predict `pred1b' if !missing(`outcome'), xb   
+								reg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse'                 // left
 								predict `pred0b' if !missing(`outcome'), xb
-							}
-							else {
-								reghdfe `outcome' `varlist' if `running' >= 0 & `running' <= `band_r' & `touse', a(`FE'=`site') 	// right
-								predict `xb' if !missing(`outcome'), xb
-								bys `site': egen `d' = max(`FE')
-								gen `pred1b' = `xb' + `d'
-								drop `d' `xb' `FE'
+								}
 								
-								reghdfe `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`FE'=`site') 	
-								predict `xb' if !missing(`outcome'), xb
-								bys `site': egen `d' = max(`FE')
-								gen `pred0b' = `xb' + `d'
-								drop `d' `xb' `FE'								
-							}
-							 
-						}				 
+							if !mi("`site'") {                                 // With FEs
+								if mi("`reghd'") {
+									areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site')		// right
+									predict `pred1b' if !missing(`outcome'), xb
+									areg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`site') 
+									predict `pred0b' if !missing(`outcome'), xb
+								}
+								else {
+									reghdfe `outcome' `varlist' if `running' >= 0 & `running' <= `band_r' & `touse', a(`FE'=`site') 	// right
+									predict `xb' if !missing(`outcome'), xb
+									bys `site': egen `d' = max(`FE')
+									gen `pred1b' = `xb' + `d'
+									drop `d' `xb' `FE'
+									
+									reghdfe `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse', a(`FE'=`site') 	
+									predict `xb' if !missing(`outcome'), xb
+									bys `site': egen `d' = max(`FE')
+									gen `pred0b' = `xb' + `d'
+									drop `d' `xb' `FE'								
+								}
+								 
+							}				 
 
-						gen `effectb' = `pred1b'-`pred0b' 
+							gen `effectb' = `pred1b'-`pred0b' 
 
-						su `effectb' if `assign' & `running' < `band_r' & `touse'
-						matrix boot_M[`iter',1] = r(mean)
-						su `effectb' if !`assign' & `running' > `band_l' & `touse'
-						matrix boot_M[`iter',2] = r(mean)					
-						
-						cap drop qtle_xrb qtle_xlb
-						
-						if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore"{       // atm pscore is not supported!!
-							xtile qtle_xrb = `running' if `assign'  & `running' > 0 & `running' < `band_r' & `touse',  nq(`nquant_r')  // Quantiles on the right of the cutoff
-							xtile qtle_xlb = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse', nq(`nquant_l')  // Quantiles on the left of the cutoff
+							su `effectb' if `assign' & `running' < `band_r' & `touse'
+							matrix boot_M[`iter',1] = r(mean)
+							su `effectb' if !`assign' & `running' > `band_l' & `touse'
+							matrix boot_M[`iter',2] = r(mean)					
 							
-							forval qt = 1/`nquant_l'{         
-								su `effectb' if qtle_xlb == `qt' & !`assign' & `running' > `band_l' & `running' < 0  // left
-								matrix boot_Q[`iter',`qt'] = r(mean)	
-							}	
-							forval qt = 1/`nquant_r'{         
-								su `effectb' if qtle_xrb == `qt' & `assign' & `running' > 0 & `running' < `band_r'    // right
-								local qtt = `qt' + `nquant_l'
-								matrix boot_Q[`iter',`qtt'] = r(mean)			
-							}							
-						}
-						
-						
-						restore
+							cap drop qtle_xrb qtle_xlb
+							
+							if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" == "linear"{       
+								xtile qtle_xrb = `running' if `assign'  & `running' > 0 & `running' < `band_r' & `touse',  nq(`nquant_r')  // Quantiles on the right of the cutoff
+								xtile qtle_xlb = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse', nq(`nquant_l')  // Quantiles on the left of the cutoff
+								
+								forval qt = 1/`nquant_l'{         
+									su `effectb' if qtle_xlb == `qt' & !`assign' & `running' > `band_l' & `running' < 0  // left
+									matrix boot_Q[`iter',`qt'] = r(mean)	
+								}	
+								forval qt = 1/`nquant_r'{         
+									local qtt = `qt' + `nquant_l'
+									su `effectb' if qtle_xrb == `qt' & `assign' & `running' > 0 & `running' < `band_r'    // right
+									matrix boot_Q[`iter',`qtt'] = r(mean)			
+								}							
+							}
+														
+							restore
 						}
 						
 						
@@ -324,45 +395,51 @@ version 14.0
 						
 						else if "`method'" == "pscore" {
 						
-						if mi("`site'") {
-							logit `assign' `varlist' if !mi(`outcome')  & `running' > `band_l' & `running' <`band_r' & `touse'
+							if mi("`site'") {
+								logit `assign' `varlist' if !mi(`outcome')  & `running' > `band_l' & `running' <`band_r' & `touse'
+								}
+							if !mi("`site'") {
+								logit `assign' `varlist' i.`site' if !mi(`outcome')  & `running' > `band_l' & `running' < `band_r' & `touse'
+								}
+							
+							predict pred_pb if e(sample)
+							replace pred_pb = . if pred_pb < `psLow' | pred_pb > `psHigh'  // trim pscore
+								
+							su `assign' if !mi(pred_pb)
+							local p = r(mean)
+							
+							g ATNTb = Y * (T - pred_pb)/(pred_pb*(1-`p'))
+							su ATNTb
+							matrix boot_M[`iter',1] = r(mean)
+							
+							g ATTb = Y * (T - pred_pb)/((1-pred_pb)*`p')	
+							su ATTb
+							matrix boot_M[`iter',2] = r(mean)
+							
+							forval qt = 1/`nquant_l' {
+								cap drop __teQt
+								su __inQt 
+								local pQt = r(mean)
+								
+								g __teQt = `outcome' * ( (`assign' - pred_pb) / (pred_pb * ( 1-pred_pb)) ) * (__pscoreQt_L`qt' / `pQt')
+								su __teQt
+								matrix boot_Q[`iter', `qt'] = r(mean)
+								
 							}
-						if !mi("`site'") {
-							logit `assign' `varlist' i.`site' if !mi(`outcome')  & `running' > `band_l' & `running' < `band_r' & `touse'
-							}
-							 
-						predict pred_p if !mi(`outcome')
+
+							forval qt = 1/`nquant_r' {
+								cap drop __teQt
+								su __inQt 
+								local pQt = r(mean)
+								
+								g __teQt = `outcome' * ( (`assign' - pred_pb) / (pred_pb * ( 1-pred_pb)) ) * (__pscoreQt_R`qt' / `pQt')
+								local qtt = `qt' + `nquant_l'
+								su __teQt								
+								matrix boot_Q[`iter', `qtt'] = r(mean)
+								
+							}					
 							
-						su pred_p if !`assign'
-						su pred_p if `assign'
-						su `assign' if !mi(pred_p)
-						local p = r(mean)
-						
-						gen w0 = (1 - `assign')/(1 - pred_p)
-						gen w1 = `assign'/pred_p
-					
-						gen w00 = w0*((1 - pred_p)/(1 - `p'))
-						gen w10 = w1*((1 - pred_p)/(1 - `p'))
-							
-						gen w01 = w0*(pred_p/`p')
-						gen w11 = w1*(pred_p/`p')
-											
-						foreach w in w00 w10 w01 w11 {
-							su `w' if !mi(`outcome')
-							replace `w' = `w'/r(mean)
-						}
-					
-						gen temp = (w10 - w00)*`outcome'
-						su temp if `running' > `band_l' & `running' < `band_r' & `touse'
-						matrix boot_M[`iter',1] = r(mean)
-						drop temp
-							
-						gen temp = (w11 - w01)*`outcome'
-						su temp if `running' > `band_l' & `running' < `band_r' & `touse'
-						matrix boot_M[`iter',2] = r(mean)
-						drop temp
-						drop pred_p w0 w1 w00 w10 w01 w11
-						restore
+							restore
 						}
 					}
 			  
@@ -372,7 +449,7 @@ version 14.0
 			  su boot_M2 
 			  local se_eff0 = r(sd)	
 
-     	      if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore" > 0 {
+     	      if (`nquant_l' > 0 & `nquant_r' > 0) {
 			      svmat boot_Q
 				  forval qt = 1/`effnq'{   
 						su boot_Q`qt'
@@ -423,16 +500,16 @@ version 14.0
 			  }
 		 	 
 			 
-			 * Storage of results
- 			 scalar drop _all
-			 
-			 if !mi("`genvar'"){
-				 g `genvar' = `effect'
-				 }
-				
-				
-			 }	
-			 			
+		 * Storage of results
+		 scalar drop _all
+		 if !mi("`genvar'"){
+			 g `genvar' = `effect'
+			 }
+			
+			
+		 }	
+		 
+		 cap drop __pscoreQt*
 				
 		  ** Prepare elements to print
 			
@@ -532,17 +609,22 @@ version 14.0
 		  di as text ""
 		  di as text "CIA Covariates: `varlist'"
 
-		 
+		 if (`bootrep' == 0) {
+		 	di as text ""
+			di as text "To compute standard errors use the option bootrep(#)!"
+		 }
 		 
 		 
 		 
 		  di as text "{hline 80}"				 
 		 
 						
+		 return clear
+		 ereturn clear
 					
 					
 		 if `strap' == 1 {
-			 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" != "pscore" > 0 {
+			 if (`nquant_l' > 0 & `nquant_r' > 0) {
 					ereturn matrix quantiles = QTLES
 				}
 			 ereturn scalar se_eff1 = `se_eff1'

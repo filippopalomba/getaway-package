@@ -84,11 +84,12 @@
 
 {pstd}
 {p_end}
-{synopt:{opt pscore(string)}}  specifies the name of the variable containing the pscore. This variable is added to the current dataset.
+{synopt:{opt pscore(string)}}  specifies the name of the variable containing the pscore rather than the defaul logit model.
+This variable is added to the current dataset.
 
 {pstd}
 {p_end}
-{synopt:{opt probit}}  implements a probit model to estimate the pscore.
+{synopt:{opt probit}}  if specified uses a probit model to estimate the pscore.
 
 {pstd}
 {p_end}

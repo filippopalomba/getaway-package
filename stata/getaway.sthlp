@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.5 2023-01-03}{...}
+{* *!version 0.6 2023-06-05}{...}
 {viewerjumpto "Syntax" "getaway##syntax"}{...}
 {viewerjumpto "Description" "getaway##description"}{...}
 {viewerjumpto "Options" "getaway##options"}{...}
@@ -24,6 +24,8 @@
 {cmd:method(}{it:string}{cmd:)}
 {cmd:site(}{it:varname}{cmd:)}
 {cmd:nquant(}{it:numlist}{cmd:)}
+{cmd:probit}
+{cmd:trimming(}{it:numlist}{cmd:)}
 {cmd:bootrep(}{it:#}{cmd:)}
 {cmd:clevel(}{it:#}{cmd:)}
 {cmd:reghd}
@@ -79,7 +81,18 @@ on finer intervals of the support of the running variable. The command allows to
 {p_end}
 {synopt:{opt nq:uant(numlist)}}  specifies the number of quantiles in which the treatment effect must be estimated. It can be specified separately for each side. Default is {cmd:nquant(0 0)}. 
 	To be specified if {cmd: qtleplot} is used.
-	
+
+{pstd}
+{p_end}
+{synopt:{opt probit}}  if specified uses a probit model to estimate the pscore rather than the default logit model. 
+It is effective only if {cmd: method("pscore")} is used.
+
+{pstd}
+{p_end}
+{synopt:{opt trimming(numlist)}}  specifies a lower and an upper bound for the pscore. Units with pscore outside such interval are trimmed
+and not used in estimation and inference. It is effective only if {cmd: method("pscore")} is used and in such case the 
+default is {cmd:trimming(0.1 0.9)} according to Crump, Hotz, Imbens, and Mitnik (2009). 
+
 {pstd}
 {p_end}
 {synopt:{opt boot:rep(#)}} sets the number of replications of the non-parametric bootstrap. Default is {cmd:bootrep(0)}. If {cmd: site} is specified a non-parametric block bootstrap is used.
@@ -158,8 +171,12 @@ observations per ranking is not sufficiently high might yield inconsistent estim
 
 {p 4 8}Sergio Correia. {browse "http://scorreia.com/research/hdfe.pdf" reghdfe: Stata module for linear and instrumental-variable/GMM regression absorbing multiple levels of fixed effects.}{it:Statistical Software Components s457874}, Boston College Department of Economics (2017).{p_end}
 
+{p 4 8}Crump, Richard K., V. Joseph Hotz, Guido W. Imbens, and Oscar A. Mitnik. {browse "https://academic.oup.com/biomet/article/96/1/187/235329":Dealing with limited overlap in estimation of average treatment effects.}
+{it:Biometrika} 96.1 (2009): 187-199.{p_end}
+
 {marker authors}{...}
 {title:Authors}
 
 {p 4 8}Filippo Palomba, Princeton University, Princeton, NJ.
 {browse "mailto:fpalomba@princeton.edu":fpalomba@princeton.edu}.
+

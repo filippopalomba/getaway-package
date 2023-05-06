@@ -1,5 +1,5 @@
-*! Date        : 13 Dec 2022
-*! Version     : 0.5
+*! Date        : 06 May 2023
+*! Version     : 0.6
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Graphical visualization of the conditional independence assumption
