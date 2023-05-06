@@ -215,11 +215,11 @@ version 14.0
 				su `assign' if !mi(pred_p)
 				local p = r(mean)
 				
-				g `ATNT' = Y * (T - pred_p)/(pred_p*(1-`p'))
+				g `ATNT' = `outcome' * (`assign' - pred_p)/(pred_p*(1-`p'))
 				su `ATNT'
 				local effect_0 = r(mean)
 				
-				g `ATT' = Y * (T - pred_p)/((1-pred_p)*`p')	
+				g `ATT' = `outcome' * (`assign' - pred_p)/((1-pred_p)*`p')	
 				su `ATT'
 				local effect_1 = r(mean)
 				
@@ -408,11 +408,11 @@ version 14.0
 							su `assign' if !mi(pred_pb)
 							local p = r(mean)
 							
-							g ATNTb = Y * (T - pred_pb)/(pred_pb*(1-`p'))
+							g ATNTb = `outcome' * (`assign' - pred_pb)/(pred_pb*(1-`p'))
 							su ATNTb
 							matrix boot_M[`iter',1] = r(mean)
 							
-							g ATTb = Y * (T - pred_pb)/((1-pred_pb)*`p')	
+							g ATTb = `outcome' * (`assign' - pred_pb)/((1-pred_pb)*`p')	
 							su ATTb
 							matrix boot_M[`iter',2] = r(mean)
 							
