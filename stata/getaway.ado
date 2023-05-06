@@ -225,7 +225,7 @@ version 14.0
 				
 				su `ATT' if `assign'
 				local N_T = r(N)
-				su `ATT' if `assign'
+				su `ATT' if !`assign'
 				local N_C = r(N)
 			}	
 
