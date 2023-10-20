@@ -13,6 +13,8 @@ cap mkdir article
 cap mkdir article/fig_git
 global fig "article/fig_git"
 
+ssc install schemepack, replace
+
 use "data/simulated_getaway.dta", clear
 
 summarize Y T X cutoff
@@ -63,9 +65,9 @@ generate incs = pscore >= e(CSmin) & pscore <= e(CSmax)
 tabulate incs T
 
 * estimate treatment effects away from the cutoff
-getaway w1 w2 w1sq w2sq w2Xw1 if incs, o(Y) s(X) c(0) b(7) site(site) ///
-qtleplot nquant(5 5) boot(200) gphoptions(graphregion(color(white))   ///
-plotregion(color(white)) scheme(white_tableau) legend(rows(4)) 		  ///
+getaway w1 w2 w1sq w2sq w2Xw1 if incs, o(Y) s(X) c(0) b(7) site(site)       ///
+qtleplot nquant(5 5) boot(10) gphoptions(graphregion(color(white))          ///
+plotregion(color(white)) scheme(white_tableau) legend(rows(1) position(6)) 	///
 title("")) genvar(effect_est) reghd
 
 

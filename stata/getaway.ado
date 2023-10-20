@@ -18,7 +18,7 @@ version 14.0
 			   gphoptions(string) GENvar(string) asis]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb FE d xb
-			   
+			   di "alooo"
 	    qui {
 			 
 			 if !mi("`reghd'") {
@@ -61,7 +61,7 @@ version 14.0
 			 
 			 if mi("`nquant'") {
 				local nquant "0 0"
-				}
+			}
 
 			 tokenize `nquant'
 			 local w : word count `nquant'
@@ -69,12 +69,17 @@ version 14.0
 			 if `w' == 1 {
 				local nquant_l = `"`1'"'
 				local nquant_r = `"`1'"'
-			    }
+			 }
 			 if `w' == 2 {
 				local nquant_l `"`1'"'
 				local nquant_r `"`2'"'
-			    }
+			 }
 			 
+			 local effnq = `nquant_l' + `nquant_r'
+			 
+			 if mi("`method'") {
+			 	local method = "linear"
+			 }
 			 
 			 if "`method'" == "pscore" {             
 			 	** atm pscore does not support quantile estimation
@@ -133,7 +138,7 @@ version 14.0
 			 
 			 ** a) Linear Reweighting Estimator (Kline, 2011)
 			 
-			 if "`method'" == "linear" | mi("`method'") {     // Linear Reweighting estimator is the default
+			 if "`method'" == "linear"  {     // Linear Reweighting estimator is the default
 			 if mi("`site'") {                                  // Without FEs
 	   			 reg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse'			  // right
 				 matrix b1 = e(b)
@@ -232,11 +237,13 @@ version 14.0
 			 
 			 
 			 **** WITHIN-QUANTILE ESTIMATION ****
+			 
 			 if (`nquant_l' > 0 & `nquant_r' > 0) & "`method'" == "linear" { 
 			 	
 				local effnq = `nquant_l' + `nquant_r'
 
 			    matrix define QTLES = J(`effnq',4,.)
+				di "uagnuuu"
 				xtile `qtle_xr' = `running' if `assign'  & `running' > 0 & `running' < `band_r' & `touse',  nq(`nquant_r')  // Quantiles on the right of the cutoff
 				xtile `qtle_xl' = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse', nq(`nquant_l')  // Quantiles on the left of the cutoff
 				
@@ -318,7 +325,7 @@ version 14.0
 				 if (`nquant_l' > 0 & `nquant_r' > 0) {
 						matrix define boot_Q = J(`bootrep',`effnq',.)
 					}
-			 
+
 			 forval iter = 1/`bootrep'{
 						nois _dots `iter' 0
 			 
@@ -448,12 +455,13 @@ version 14.0
 			  local se_eff1 = r(sd)
 			  su boot_M2 
 			  local se_eff0 = r(sd)	
-
+				di as error "uagnu"
      	      if (`nquant_l' > 0 & `nquant_r' > 0) {
 			      svmat boot_Q
 				  forval qt = 1/`effnq'{   
 						su boot_Q`qt'
 						matrix QTLES[`qt',2] = r(sd)
+				di as error "uagnu"
 				  }
 				  matrix colnames QTLES = Estimate SE Xlb Xub
 			  }
@@ -493,7 +501,7 @@ version 14.0
 						   (rspike QTLES5 QTLES6 num, lcolor(black) xline(`vertbar',lc(black) lw(vthin) lp(dash)))	 /// /* Qtles 95% CI         */
 						   (scatter QTLES1 num, mcolor(cranberry) m(T)), 											 /// /* Qtles point estimate */
 						    xlabel(1(1)`effnq')  ytitle("Treatment Effect ") ylabel(,nogrid) legend(order(5 6 8 7) lab(5 "ATT") ///
-							lab(6 "ATNT") lab(8 "Within-Quantile Estimate") lab(7 "95% CI") rows(2) region(style(none)) nobox) xtitle("Quantiles")     ///
+							lab(6 "ATNT") lab(8 "Within-Quantile Estimate") lab(7 "95% CI") rows(1) position(6) region(style(none)) nobox) xtitle("Quantiles")     ///
 							title("Treatment Effect") `gphoptions'						
 					
 				restore
