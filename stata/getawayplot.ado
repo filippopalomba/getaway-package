@@ -1,14 +1,8 @@
-*! Date        : 06 May 2023
-*! Version     : 0.6
+*! Date        : 01 Dec 2023
+*! Version     : 0.7
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Plot non-parametric extrapolation of treatment effect
-
-/*
-FUTURE release should include:
-	- Extension to PSW estimation.
-	- Add fuzzy version 
-*/
 
 
 program getawayplot              
@@ -139,7 +133,7 @@ version 14.0
 				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lc(black) lp(solid) lw(medthick))     ///
 				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) lc(red))   ///
 				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick) lc(red)),  ///
-				 legend(order(6 8 1) size(small) label(6 "Fitted") label(8 "Extrapolated") label(1 "`clevel' confidence bands") rows(2))						  ///
+				 legend(order(6 8 1) size(small) label(6 "Fitted") label(8 "Extrapolated") label(1 "`clevel'% confidence bands") rows(2))						  ///
 				 xtitle("Standardized Running Variable") ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
 			 } 
 			 else {

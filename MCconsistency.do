@@ -1,7 +1,7 @@
 **************************************************************
 ** Author: Filippo Palomba
 ** Date: 4 Mar 2023
-** Monte Carlo Simulation to show unbiasedness of getaway
+** Monte Carlo Simulation to show consistency of getaway
 **************************************************************
 
 cd "/Users/fpalomba/Dropbox (Princeton)/projects/getaway-project-backend"
@@ -144,7 +144,7 @@ twoway (rcap QTLES5 QTLES6 qtle, yline(0))                       ///
 	   xtitle("Quantile of Running Variable") ytitle("bias (%)") ///
 	   yscale(range(-10 10)) ylabel(-10(5)10)
 
-*graph export "article/fig_git/unbiasednessMC.png", replace
+graph export "article/fig_git/unbiasednessMC.png", replace
 
 restore 
 

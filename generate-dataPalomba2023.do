@@ -1,10 +1,17 @@
 **************************************************************
 ** Author: Filippo Palomba
-** Date: 12 Jan 2022
-** Generate simulated_getaway.dta
+** Date: 1 Dec 2023
+** Generate data
 **************************************************************
 
+
 clear
+cd "/Users/fpalomba/Dropbox (Princeton)/projects/getaway-project-backend"
+cap mkdir article
+cap mkdir data
+cap mkdir article/fig
+global fig "article/fig"
+
 
 local Nobs = 2000                  // Observations in the sample
 local Nranks = 5                   // Number of different rankings
@@ -76,6 +83,20 @@ g Yobs = Y + noise_Y
 * Generate Treatment Effect
 g effect = Y1 - Y0
 
+sort W
+
+twoway (qfit Y1 W , lc(black) lp(solid) lw(medthick))                      ///
+	   (qfit Y0 W ,lc(orange_red) lp(dash) lw(medthick))                   ///
+	   (line effect W, yaxis(2) lp(dash_dot) lc(cranberry) lw(medthick)),  ///
+ 	   legend(lab(1 "Y1") lab(2 "Y0") lab(3 "Treatment Effect")            ///
+	   rows(1) position(6) region(style(none)) nobox) ylabel(,nogrid)      ///
+	   xline(0, lw(thin)) ytitle("Outcome", axis(1))                       ///
+	   ytitle("Treatment Effect", axis(2)) xtitle("Score")                 ///
+	   xscale(range(-5.1 7)) xlabel(-5(3)7) scheme(white_tableau)	   
+	   
+graph export "article/fig_git/potential_outcomes.png", replace
+graph close
+
 ** Label and eliminate variables
 
 foreach j of numlist 1/`Ncandidates'{
@@ -97,4 +118,4 @@ sort site
 rename Yobs Y
 la var Y "Outcome Variable"
 
-save "simulated_getaway.dta", replace
+save "data/simulated_getaway.dta", replace

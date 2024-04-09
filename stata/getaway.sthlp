@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.6 2023-06-05}{...}
+{* *!version 0.7 2023-12-01}{...}
 {viewerjumpto "Syntax" "getaway##syntax"}{...}
 {viewerjumpto "Description" "getaway##description"}{...}
 {viewerjumpto "Options" "getaway##options"}{...}

@@ -1,13 +1,8 @@
-*! Date        : 06 May 2023
-*! Version     : 0.6
+*! Date        : 01 Dec 2023
+*! Version     : 0.7
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Graphical visualization of the common support condition in RDD
-
-/*
-FUTURE release should include:
-	- Appropriate label tickers on the Y-axis.
-*/
 
 program ciacs, eclass         
 version 14.0           

@@ -1,5 +1,5 @@
-*! Date        : 06 May 2023
-*! Version     : 0.6
+*! Date        : 01 Dec 2023
+*! Version     : 0.7
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Algorithm for data-driven covariate selection to validate CIA condition
@@ -228,7 +228,8 @@ if !mi("`unique'"){
 				continue, break
 				}
 			else {                           // In this case a minimiser has been found and has to be taken out to the list of candidates ...
-				disp as text "Iteration #`iter' finished || Loss Function (>`critval') `loss_fun_max' || Selected `temp_maximiser' "
+				local loss_fun_max_print : di %4.3f `loss_fun_max'
+				display as text "Iteration #`iter' finished || Loss Function (>`critval'): `loss_fun_max_print' || Selected `temp_maximiser' "
 				local candidates: list candidates - temp_maximiser
 				local selected_covs `selected_covs' `temp_maximiser'   // ... and added to the list of selected covariates in the next iteration
 			}
@@ -403,11 +404,12 @@ if mi("`unique'"){
 			
 			
 			if "`temp_maximiser'" == "" {     // In this case no maximiser has been found, so the algorithm stops
-				disp as text as text "{bf: Algorithm not converged}"
+				display as text as text "{bf: Algorithm not converged}"
 				continue, break
 				}
 			else {                           // In this case a maximiser has been found and has to be taken out of the list of candidates ...
-				disp as text "Iteration #`iter' finished || Loss Function (>`critval') `loss_fun_max_l' || Selected `temp_maximiser' "
+				local loss_fun_max_print : di %4.3f `loss_fun_max_l'
+				display as text "Iteration #`iter' finished || Loss Function (>`critval'): `loss_fun_max_print' || Selected `temp_maximiser' "
 				local candidates_l: list candidates_l - temp_maximiser
 				local selected_covs_l `selected_covs_l' `temp_maximiser'   // ... and added to the list of selected covariates in the next iteration
 			}
@@ -460,7 +462,8 @@ if mi("`unique'"){
 				continue, break
 				}
 			else {                            // In this case a minimiser has been found and has to be taken out of the list of candidates ...
-				disp as text "Iteration #`iter' finished || Loss Function (>`critval') `loss_fun_max_r' || Selected `temp_maximiser' "
+				local loss_fun_max_print : di %4.3f `loss_fun_max_r'
+				display as text "Iteration #`iter' finished || Loss Function (>`critval'): `loss_fun_max_print' || Selected `temp_maximiser' "
 				local candidates_r: list candidates_r - temp_maximiser
 				local selected_covs_r `selected_covs_r' `temp_maximiser'   // ... and added to the list of selected covariates in the next iteration
 			}
@@ -535,7 +538,7 @@ else {
 
 ereturn local selected_covs_r `selected_covs_r'    // Local containing covariates satisfying the CIA on the right
 ereturn local selected_covs_l `selected_covs_l'    // Local containing covariates satisfying the CIA on the left
-ereturn local CIAright `CIAright'				  // Flag equal to 1 if CIA holds on the right 
+ereturn local CIAright `CIAright'				   // Flag equal to 1 if CIA holds on the right 
 ereturn local CIAleft `CIAleft'                    // Flag equal to 1 if CIA holds on the left 
 
 

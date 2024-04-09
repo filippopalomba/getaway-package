@@ -4,11 +4,6 @@
 *! Email       : fpalomba@princeton.edu
 *! Description : Estimate Heterogeneous TEs in Sharp RDD
 
-/*
-FUTURE release should include:
-	- Extension of PSW estimation to quantiles.
-	- Merge with the fuzzy version
-*/
 
 program getaway, eclass
 version 14.0           
@@ -18,7 +13,6 @@ version 14.0
 			   gphoptions(string) GENvar(string) asis]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb FE d xb
-			   di "alooo"
 	    qui {
 			 
 			 if !mi("`reghd'") {
@@ -146,8 +140,8 @@ version 14.0
 				 reg `outcome' `varlist' if `running' < 0 & `running' > `band_l' & `touse'              // left
 				 matrix b0 = e(b)
 				 predict `pred0' if !missing(`outcome'), xb
-				 
 				 }			 
+
 			 if !mi("`site'") {                                 // With FEs
 				 if mi("`reghd'") {
 					 areg `outcome' `varlist' if `running' >= 0 & `running' < `band_r' & `touse', a(`site') 		    // right
@@ -243,7 +237,6 @@ version 14.0
 				local effnq = `nquant_l' + `nquant_r'
 
 			    matrix define QTLES = J(`effnq',4,.)
-				di "uagnuuu"
 				xtile `qtle_xr' = `running' if `assign'  & `running' > 0 & `running' < `band_r' & `touse',  nq(`nquant_r')  // Quantiles on the right of the cutoff
 				xtile `qtle_xl' = `running' if !`assign' & `running' > `band_l' & `running' < 0 & `touse', nq(`nquant_l')  // Quantiles on the left of the cutoff
 				
@@ -455,13 +448,11 @@ version 14.0
 			  local se_eff1 = r(sd)
 			  su boot_M2 
 			  local se_eff0 = r(sd)	
-				di as error "uagnu"
      	      if (`nquant_l' > 0 & `nquant_r' > 0) {
 			      svmat boot_Q
 				  forval qt = 1/`effnq'{   
 						su boot_Q`qt'
 						matrix QTLES[`qt',2] = r(sd)
-				di as error "uagnu"
 				  }
 				  matrix colnames QTLES = Estimate SE Xlb Xub
 			  }

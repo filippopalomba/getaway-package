@@ -35,7 +35,8 @@ net install getaway, from("https://raw.githubusercontent.com/filippopalomba/geta
 
 ## Examples of papers using this package:
 
-- [Cingano, Palomba, Pinotti, and Rettore (2022)](https://filippopalomba.github.io/docs/Cingano-Palomba-Pinotti-Rettore_2022_subsidies.pdf) - "Making Subsidies Work: Rules vs. Discretion", working paper.
+- [Cingano, Palomba, Pinotti, and Rettore (2023)](https://filippopalomba.github.io/docs/Cingano-Palomba-Pinotti-Rettore_2023_subsidies_main.pdf) - "Making Subsidies Work: Rules vs. Discretion", working paper.
+- [Incoronato and Lattanzio (2024)](https://lincoronato.github.io/files/jmp_incoronato.pdf) - "Place-Based Industrial Policies and Local Agglomeration in the Long Run", working paper.
 
 ## References
 
