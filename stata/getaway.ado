@@ -465,7 +465,7 @@ version 14.0
 			  if !mi("`qtleplot'"){
 
 				if mi("`legendopt'") {
-					local legendopt `" order(5 6 8 7) lab(5 "ATT") lab(6 "ATNT") lab(8 "Within-Quantile Estimate") lab(7 "95% CI") rows(1) position(6) region(style(none)) nobox "'
+					local legendopt `" order(5 6 8 ) lab(5 "ATT") lab(6 "ATNT") lab(8 "Within-Quantile Estimate") rows(1) position(6) region(style(none)) nobox "'
 				}
 
 				preserve
@@ -489,14 +489,14 @@ version 14.0
 					replace num2 = `vertbar' if num2 == `nquant_l' + 1
 					replace num2 = 0.5 if num2 == 1
 					replace num2 = _n + 0.5 if num2 == _n
-					twoway (line ATTl num2 if num > `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `attciplotopt')    /// /* ATT lower bound      */
-					       (line ATTu num2 if num > `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `attciplotopt')    /// /* ATT upper bound      */
-   						   (line ATNTl num2 if num < `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `atntciplotopt')  /// /* ATNT lower bound     */
-   						   (line ATNTu num2 if num < `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `atntciplotopt')  /// /* ATNT upper bound     */
+					twoway (line ATTl num2 if num > `vertbar', lp(dash) lw(vvthin) color(%40) `attciplotopt')    /// /* ATT lower bound      */
+					       (line ATTu num2 if num > `vertbar', lp(dash) lw(vvthin) color(%40) `attciplotopt')    /// /* ATT upper bound      */
+   						   (line ATNTl num2 if num < `vertbar', lp(dash) lw(vvthin) color(%40) `atntciplotopt')  /// /* ATNT lower bound     */
+   						   (line ATNTu num2 if num < `vertbar', lp(dash) lw(vvthin) color(%40) `atntciplotopt')  /// /* ATNT upper bound     */
 						   (line ATT num2 if num > `vertbar', lp(solid) lw(thin) `attplotopt') 				     	 	  /// /* ATT point estimate   */
 						   (line ATNT num2 if num < `vertbar', lp(solid) lw(thin) `atntplotopt') 					 	  /// /* ATNT point estimate  */
 						   (rspike QTLES5 QTLES6 num, `qtleciplotopt')	 	  											  /// /* Qtles CI             */
-						   (scatter QTLES1 num, m(T) `qtleplotopt'), 											 	  /// /* Qtles point estimate */
+						   (scatter QTLES1 num, m(T) `qtleplotopt'), 											 	      /// /* Qtles point estimate */
 						    xlabel(1(1)`effnq')  ytitle("Treatment Effect ") ylabel(,nogrid) legend(`legendopt') 		  ///
 							xtitle("Quantiles") title("Treatment Effect") xline(`vertbar',lc(black) lw(vthin) lp(dash))   ///
 							`gphoptions'						

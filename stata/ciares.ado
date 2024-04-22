@@ -172,13 +172,13 @@ version 14.0
 					if mi("`legendopt'") {
 						local legendopt `" order(3 6 1 4) lab(3 "conditional mean") lab(6 "unconditional mean") lab(1 "conditional regression") lab(4 "unconditional regression") rows(2) position(6) "'   
 					}
-					twoway (lfit `res' `running' if `running' < 0, lpattern(solid) lwidth(thick) `lineLplotopt')        										  ///
-						   (lfit `res' `running' if `running' >= 0, lpattern(solid) lwidth(thick) `lineRplotopt')      									      ///
-						   (scatter `cond_y' `cut_x' if `toplot' == 1, msymbol(smcircle) `scatterplotopt') 		  ///					       
-						   (lfit `res_cmp' `running' if `running' < 0, lpattern(dash) lcolor(%20) yaxis(2) lwidth(thick) `lineL2plotopt')   							  ///
-						   (lfit `res_cmp' `running' if `running' >= 0, lpattern(dash) lcolor(%20) yaxis(2) lwidth(thick) `lineR2plotopt')    							  ///
-						   (scatter `cond_y_cmp' `cut_x' if `toplot' == 1, mc(%20) msymbol(smdiamond) yaxis(2) `scatter2plotopt'), 									  ///
-						   ylabel(,nogrid) xlabel(`x_lb'(`x_step')`x_ub') ytitle("conditional") ytitle("unconditional", axis(2))              ///
+					twoway (lfit `res' `running' if `running' < 0, lpattern(solid) lwidth(thick) `lineLplotopt')        					///
+						   (lfit `res' `running' if `running' >= 0, lpattern(solid) lwidth(thick) `lineRplotopt')      						///
+						   (scatter `cond_y' `cut_x' if `toplot' == 1, msymbol(smcircle) `scatterplotopt') 		  							///					       
+						   (lfit `res_cmp' `running' if `running' < 0, lpattern(dash) lcolor(%40) yaxis(2) lwidth(thick) `lineL2plotopt')   ///
+						   (lfit `res_cmp' `running' if `running' >= 0, lpattern(dash) lcolor(%40) yaxis(2) lwidth(thick) `lineR2plotopt')  ///
+						   (scatter `cond_y_cmp' `cut_x' if `toplot' == 1, mc(%20) msymbol(smdiamond) yaxis(2) `scatter2plotopt'), 			///
+						   ylabel(,nogrid) xlabel(`x_lb'(`x_step')`x_ub') ytitle("conditional") ytitle("unconditional", axis(2))            ///
 						   xtitle("Running Variable") title("") legend(`legendopt') xline(0, lpattern(shortdash)) `gphoptions' 
 					}
 				restore	   
