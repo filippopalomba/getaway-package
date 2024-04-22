@@ -108,7 +108,7 @@ version 14.0
 					}
 
 					** Plot common support histograms
-					graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, color(navy)) (bar `temp_y0' `temp_x' if `temp_i' == 1, color(maroon)),  ///
+					graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, color(blue%50)) (bar `temp_y0' `temp_x' if `temp_i' == 1, color(red%50)),  ///
 						xtitle("Propensity Score") ytitle("Frequency") legend(`legendopt') 				   ///
 						xlabel(0 "0" `tk1' "0.2" `tk2' "0.4" `tk3' "0.6" `tk4' "0.8" `nbins' "1") ylabel("", nogrid)   	         				   ///
 						title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
