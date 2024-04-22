@@ -109,6 +109,10 @@ eg. {cmd: cmpr(2 3)} for a second order polynomial on the left and a third order
 {p_end}
 {synopt:{opt lineRplotopt(string)}} specifies graphical options to be passed on to the underlying line plot (right of cutoff, secondary axis).
 
+{pstd}
+{p_end}
+{synopt:{opt legendopt(string)}} specifies graphical options to be passed on to the underlying plot legend.
+
 {hline}
 
 
