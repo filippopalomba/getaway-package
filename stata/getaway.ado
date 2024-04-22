@@ -11,7 +11,7 @@ version 14.0
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Method(string) site(varname) ///
 			   NQuant(numlist max=2 integer) probit trimming(string) BOOTrep(integer 0) clevel(real 95) reghd qtleplot             ///
 			    GENvar(string) asis gphoptions(string) scatterplotopt(string)  qtleplotopt(string) qtleciplotopt(string) ///
-				attplotopt(string) attciplotopt(string) atntplotopt(string) atntciplotopt(string)]
+				attplotopt(string) attciplotopt(string) atntplotopt(string) atntciplotopt(string) legendopt(string)]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb FE d xb
 	    qui {

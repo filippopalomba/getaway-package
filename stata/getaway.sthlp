@@ -39,6 +39,7 @@
 {cmd:attciplotopt(}{it:string}{cmd:)}
 {cmd:atntplotopt(}{it:string}{cmd:)}
 {cmd:atntciplotopt(}{it:string}{cmd:)}
+{cmd:legendopt(}{it:string}{cmd:)}
 ]{p_end}
 
 {synoptset 28 tabbed}{...}
@@ -154,6 +155,10 @@ for the treatment effect at each quantile of the running variable.
 {pstd}
 {p_end}
 {synopt:{opt atntciplotopt(string)}}  specifies graphical options to be passed on to the underlying line plot for the confidence interval of the average treatment effect on the non-treated.
+
+{pstd}
+{p_end}
+{synopt:{opt legendopt(string)}} specifies graphical options to be passed on to the underlying plot legend.
 
     {hline}
 
