@@ -87,27 +87,27 @@ eg. {cmd: cmpr(2 3)} for a second order polynomial on the left and a third order
 
 {pstd}
 {p_end}
-{synopt:{opt scatterplotopt(string)} specifies graphical options to be passed on to the underlying scatter plot.}
+{synopt:{opt scatterplotopt(string)}} specifies graphical options to be passed on to the underlying scatter plot.
 
 {pstd}
 {p_end}
-{synopt:{opt scatter2plotopt(string)} specifies graphical options to be passed on to the underlying scatter plot (secondary axis).}
+{synopt:{opt scatter2plotopt(string)}} specifies graphical options to be passed on to the underlying scatter plot (secondary axis).
 
 {pstd}
 {p_end}
-{synopt:{opt lineLplotopt(string)} specifies graphical options to be passed on to the underlying line plot (left of cutoff).}
+{synopt:{opt lineLplotopt(string)}} specifies graphical options to be passed on to the underlying line plot (left of cutoff).
 
 {pstd}
 {p_end}
-{synopt:{opt lineRplotopt(string)} specifies graphical options to be passed on to the underlying line plot (right of cutoff).}
+{synopt:{opt lineRplotopt(string)}} specifies graphical options to be passed on to the underlying line plot (right of cutoff).
 
 {pstd}
 {p_end}
-{synopt:{opt lineLplotopt(string)} specifies graphical options to be passed on to the underlying line plot (left of cutoff, secondary axis).}
+{synopt:{opt lineLplotopt(string)}} specifies graphical options to be passed on to the underlying line plot (left of cutoff, secondary axis).
 
 {pstd}
 {p_end}
-{synopt:{opt lineRplotopt(string)} specifies graphical options to be passed on to the underlying line plot (right of cutoff, secondary axis).}
+{synopt:{opt lineRplotopt(string)}} specifies graphical options to be passed on to the underlying line plot (right of cutoff, secondary axis).
 
 {hline}
 
