@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.7 2023-12-01}{...}
+{* *!version 0.8 2024-04-22}{...}
 {viewerjumpto "Syntax" "ciatest##syntax"}{...}
 {viewerjumpto "Description" "ciatest##description"}{...}
 {viewerjumpto "Options" "ciatest##options"}{...}

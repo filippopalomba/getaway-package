@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.7 2023-12-01}{...}
+{* *!version 0.8 2024-04-22}{...}
 {viewerjumpto "Syntax" "getawayplot##syntax"}{...}
 {viewerjumpto "Description" "getawayplot##description"}{...}
 {viewerjumpto "Options" "getawayplot##options"}{...}
@@ -26,7 +26,12 @@
 {cmd:nbins(}{it:numlist}{cmd:)}
 {cmd:clevel(}{it:#}{cmd:)}
 {cmd:nose}
-{cmd:gphoptions(}{it:string}{)}]{p_end}
+{cmd:gphoptions(}{it:string}{)}
+{cmd:scatterplotopt(}{it:string}{cmd:)}
+{cmd:areaplotopt(}{it:string}{cmd:)}
+{cmd:lineplotopt(}{it:string}{cmd:)}
+{cmd:lineCFplotopt(}{it:string}{cmd:)}
+]{p_end}
 
 {synoptset 28 tabbed}{...}
 
@@ -90,6 +95,23 @@ with within-bin averages of the counterfactual outcome to show the fit of the no
 {pstd}
 {p_end}
 {synopt:{opt gphoptions(string)}}  specifies graphical options to be passed on to the underlying graph command.
+
+{pstd}
+{p_end}
+{synopt:{opt scatterplotopt(string)}} specifies graphical options to be passed on to the underlying scatter plot.
+
+{pstd}
+{p_end}
+{synopt:{opt lineplotopt(string)}} specifies graphical options to be passed on to the underlying line plot for observed potential outcomes.
+
+{pstd}
+{p_end}
+{synopt:{opt lineCFplotopt(string)}} specifies graphical options to be passed on to the underlying line plot for counterfactual potential outcomes.
+
+{pstd}
+{p_end}
+{synopt:{opt areaplotopt(string)}} specifies graphical options to be passed on to the underlying confidence bands plot.
+
 
     {hline}
 

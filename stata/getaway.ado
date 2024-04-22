@@ -1,5 +1,5 @@
-*! Date        : 06 May 2023
-*! Version     : 0.6
+*! Date        : 22 Apr 2024
+*! Version     : 0.8
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Estimate Heterogeneous TEs in Sharp RDD
@@ -10,7 +10,8 @@ version 14.0
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Method(string) site(varname) ///
 			   NQuant(numlist max=2 integer) probit trimming(string) BOOTrep(integer 0) clevel(real 95) reghd qtleplot             ///
-			   gphoptions(string) GENvar(string) asis]
+			    GENvar(string) asis gphoptions(string) scatterplotopt(string)  qtleplotopt(string) qtleciplotopt(string) ///
+				attplotopt(string) attciplotopt(string) atntplotopt(string) atntciplotopt(string)]
 
 		tempvar assign qtle_x qtle_xl qtle_xr running pred0 pred1 pred0b pred1b effect effectb FE d xb
 	    qui {
@@ -462,6 +463,11 @@ version 14.0
  
 			  **** PLOT WITHIN-QUANTILES ESTIMATES, ATT, ATNT AND SEs ****
 			  if !mi("`qtleplot'"){
+
+				if mi("`legendopt'") {
+					local legendopt `" order(5 6 8 7) lab(5 "ATT") lab(6 "ATNT") lab(8 "Within-Quantile Estimate") lab(7 "95% CI") rows(1) position(6) region(style(none)) nobox "'
+				}
+
 				preserve
 					clear
 					local alp   = (100 - `clevel')/200
@@ -483,17 +489,17 @@ version 14.0
 					replace num2 = `vertbar' if num2 == `nquant_l' + 1
 					replace num2 = 0.5 if num2 == 1
 					replace num2 = _n + 0.5 if num2 == _n
-					twoway (line ATTl num2 if num > `vertbar', lc(green) lp(dash) lw(vvthin) fintensity(inten20))    /// /* ATT lower bound      */
-					       (line ATTu num2 if num > `vertbar', lc(green) lp(dash) lw(vvthin) fintensity(inten20))    /// /* ATT upper bound      */
-   						   (line ATNTl num2 if num < `vertbar', lc(orange) lp(dash) lw(vvthin) fintensity(inten20))  /// /* ATNT lower bound     */
-   						   (line ATNTu num2 if num < `vertbar', lc(orange) lp(dash) lw(vvthin) fintensity(inten20))  /// /* ATNT upper bound     */
-						   (line ATT num2 if num > `vertbar', lcolor(green) lp(solid) lw(thin)) 				     /// /* ATT point estimate   */
-						   (line ATNT num2 if num < `vertbar', lcolor(orange) lp(solid) lw(thin)) 					 /// /* ATNT point estimate  */
-						   (rspike QTLES5 QTLES6 num, lcolor(black) xline(`vertbar',lc(black) lw(vthin) lp(dash)))	 /// /* Qtles 95% CI         */
-						   (scatter QTLES1 num, mcolor(cranberry) m(T)), 											 /// /* Qtles point estimate */
-						    xlabel(1(1)`effnq')  ytitle("Treatment Effect ") ylabel(,nogrid) legend(order(5 6 8 7) lab(5 "ATT") ///
-							lab(6 "ATNT") lab(8 "Within-Quantile Estimate") lab(7 "95% CI") rows(1) position(6) region(style(none)) nobox) xtitle("Quantiles")     ///
-							title("Treatment Effect") `gphoptions'						
+					twoway (line ATTl num2 if num > `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `attciplotopt')    /// /* ATT lower bound      */
+					       (line ATTu num2 if num > `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `attciplotopt')    /// /* ATT upper bound      */
+   						   (line ATNTl num2 if num < `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `atntciplotopt')  /// /* ATNT lower bound     */
+   						   (line ATNTu num2 if num < `vertbar', lp(dash) lw(vvthin) fintensity(inten20) `atntciplotopt')  /// /* ATNT upper bound     */
+						   (line ATT num2 if num > `vertbar', lp(solid) lw(thin) `attplotopt') 				     	 	  /// /* ATT point estimate   */
+						   (line ATNT num2 if num < `vertbar', lp(solid) lw(thin) `atntplotopt') 					 	  /// /* ATNT point estimate  */
+						   (rspike QTLES5 QTLES6 num, `qtleciplotopt')	 	  											  /// /* Qtles CI             */
+						   (scatter QTLES1 num, m(T) `qtleplotopt'), 											 	  /// /* Qtles point estimate */
+						    xlabel(1(1)`effnq')  ytitle("Treatment Effect ") ylabel(,nogrid) legend(`legendopt') 		  ///
+							xtitle("Quantiles") title("Treatment Effect") xline(`vertbar',lc(black) lw(vthin) lp(dash))   ///
+							`gphoptions'						
 					
 				restore
 			  }

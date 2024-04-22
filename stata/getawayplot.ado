@@ -1,5 +1,5 @@
-*! Date        : 01 Dec 2023
-*! Version     : 0.7
+*! Date        : 22 Apr 2024
+*! Version     : 0.8
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Plot non-parametric extrapolation of treatment effect
@@ -9,7 +9,8 @@ program getawayplot
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Kernel(string) site(varname) Degree(integer 1) ///
-		NBins(numlist max=2 integer) gphoptions(string) clevel(real 95) nose]
+		NBins(numlist max=2 integer) clevel(real 95) nose gphoptions(string) scatterplotopt(string) lineplotopt(string) ///
+		lineCFplotopt(string) areaplotopt(string)]
 
 		tempvar running	pred1 pred0 fit0 fit1 fit0se fit1se fitlb fitub temp_x temp_xR temp_y temp_pred0 temp_pred1 temp_i
 			   
@@ -125,25 +126,25 @@ version 14.0
 			 
 			 if (mi("`nose'")) {
 				 graph twoway  ///
-				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0, fcolor(red%25) lwidth(none))					      ///
-				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, fcolor(red%25) lwidth(none))                       ///
-				 (scatter `temp_pred1' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) mcolor(red)) 		          ///
-				 (scatter `temp_pred0' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 & `temp_i' == 1, msymbol(x) mcolor(red))                ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lc(black) lp(solid) lw(medthick))     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lc(black) lp(solid) lw(medthick))     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) lc(red))   ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick) lc(red)),  ///
+				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0, fcolor(%25) lwidth(none) `areaplotopt')			  ///
+				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, fcolor(%25) lwidth(none) `areaplotopt')            ///
+				 (scatter `temp_pred1' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) `scatterplotopt') 		      ///
+				 (scatter `temp_pred0' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 & `temp_i' == 1, msymbol(x) `scatterplotopt')           ///
+				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt')   ///
+				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick)`lineCFplotopt'),  ///
 				 legend(order(6 8 1) size(small) label(6 "Fitted") label(8 "Extrapolated") label(1 "`clevel'% confidence bands") rows(2))						  ///
 				 xtitle("Standardized Running Variable") ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
 			 } 
 			 else {
 				 graph twoway  ///
-				 (scatter `temp_pred1' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) mcolor(red)) 		          ///
-				 (scatter `temp_pred0' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 & `temp_i' == 1, msymbol(x) mcolor(red))                ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lc(black) lp(solid) lw(medthick))     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lc(black) lp(solid) lw(medthick))     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) lc(red))   ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick) lc(red)),  ///
+				 (scatter `temp_pred1' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) `scatterplotopt') 		          ///
+				 (scatter `temp_pred0' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 & `temp_i' == 1, msymbol(x) `scatterplotopt')                ///
+				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt')   ///
+				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt'),  ///
 				 legend(order(4 6) size(small) label(4 "Fitted") label(6 "Extrapolated")) xtitle("Standardized Running Variable") 				                      ///
 				 ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
 			 }

@@ -1,5 +1,5 @@
-*! Date        : 01 Dec 2023
-*! Version     : 0.7
+*! Date        : 22 Apr 2024
+*! Version     : 0.8
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Graphical visualization of the common support condition in RDD
@@ -108,17 +108,11 @@ version 14.0
 						local legendopt `" label(1 "Treated") label(2 "Control") size(small) "'
 					}
 
-					if (mi("`barTopt'")) {
-						local barTopt `"color(navy)"'
-					}
-					if (mi("`barCopt'")) {
-						local barCopt `"color(maroon)"'
-					}
 					if (mi("`lineTopt'")) {
-						local lineTopt `"color(navy) lp(solid)"'
+						local lineTopt `"lp(solid)"'
 					}
 					if (mi("`lineCopt'")) {
-						local lineCopt `"color(maroon) lp(solid)"'
+						local lineCopt `"lp(solid)"'
 					}
 
 					** Plot common support histograms

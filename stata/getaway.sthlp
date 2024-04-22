@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.7 2023-12-01}{...}
+{* *!version 0.8 2024-04-22}{...}
 {viewerjumpto "Syntax" "getaway##syntax"}{...}
 {viewerjumpto "Description" "getaway##description"}{...}
 {viewerjumpto "Options" "getaway##options"}{...}
@@ -30,9 +30,16 @@
 {cmd:clevel(}{it:#}{cmd:)}
 {cmd:reghd}
 {cmd:qtleplot}
-{cmd:gphoptions(}{it:string}{cmd:)}
 {cmd:genvar(}{it:string}{cmd:)}
-{cmd:asis}]{p_end}
+{cmd:asis}
+{cmd:gphoptions(}{it:string}{cmd:)}
+{cmd:qtleplotopt(}{it:string}{cmd:)}
+{cmd:qtleciplotopt(}{it:string}{cmd:)}
+{cmd:attplotopt(}{it:string}{cmd:)}
+{cmd:attciplotopt(}{it:string}{cmd:)}
+{cmd:atntplotopt(}{it:string}{cmd:)}
+{cmd:atntciplotopt(}{it:string}{cmd:)}
+]{p_end}
 
 {synoptset 28 tabbed}{...}
 
@@ -113,15 +120,40 @@ observations per ranking is not sufficiently high might yield inconsistent estim
 	
 {pstd}
 {p_end}
-{synopt:{opt gphoptions(string)}}  specifies graphical options to be passed on to the underlying graph command.
-
-{pstd}
-{p_end}
 {synopt:{opt gen:var(string)}}  specifies the name of the variable containing the distribution of treatment effects. Only with {it:linear} option.
 
 {pstd}
 {p_end}
 {synopt:{opt asis}}  forces retention of perfect predictor variables and their associated perfectly predicted observations in p-score estimation. To be used only with {it:pscore}.
+
+{pstd}
+{p_end}
+{synopt:{opt gphoptions(string)}}  specifies graphical options to be passed on to the underlying graph command.
+
+{pstd}
+{p_end}
+{synopt:{opt qtleplotopt(string)}}  specifies graphical options to be passed on to the underlying scatter plot.
+
+{pstd}
+{p_end}
+{synopt:{opt qtleciplotopt(string)}}  specifies graphical options to be passed on to the underlying spike plot for the confidence intervals
+for the treatment effect at each quantile of the running variable.
+
+{pstd}
+{p_end}
+{synopt:{opt attplotopt(string)}}  specifies graphical options to be passed on to the underlying line plot for the average treatment effect on the treated.
+
+{pstd}
+{p_end}
+{synopt:{opt attciplotopt(string)}}  specifies graphical options to be passed on to the underlying line plot for the confidence interval of the average treatment effect on the treated.
+
+{pstd}
+{p_end}
+{synopt:{opt atntplotopt(string)}}  specifies graphical options to be passed on to the underlying line plot for the average treatment effect on the non-treated.
+
+{pstd}
+{p_end}
+{synopt:{opt atntciplotopt(string)}}  specifies graphical options to be passed on to the underlying line plot for the confidence interval of the average treatment effect on the non-treated.
 
     {hline}
 
