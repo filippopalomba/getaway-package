@@ -12,7 +12,7 @@ version 14.0
 		NBins(numlist max=2 integer) clevel(real 95) nose gphoptions(string) scatterplotopt(string) lineplotopt(string) ///
 		lineCFplotopt(string) areaplotopt(string)]
 
-		tempvar running	pred1 pred0 fit0 fit1 fit0se fit1se fitlb fitub temp_x temp_xR temp_y temp_pred0 temp_pred1 temp_i
+		tempvar running	pred1 pred0 fit0 fit1 fit0se fit1se fitlb fitub temp_x temp_xR temp_y temp_pred temp_pred0 temp_pred1 temp_i
 			   
 	qui{	         
 			 
@@ -123,30 +123,33 @@ version 14.0
 			 local x_step = (`band_r' -`band_l')/5
 			 
 			 ** Plot of Actual and Counterfactual Regression Function
-			 
+			 g `temp_pred' = `temp_pred1'
+			 replace `temp_pred' = `temp_pred0' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 &
 			 if (mi("`nose'")) {
-				 graph twoway  ///
-				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0, fcolor(%25) lwidth(none) `areaplotopt')			  ///
-				 (rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, fcolor(%25) lwidth(none) `areaplotopt')            ///
-				 (scatter `temp_pred1' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) `scatterplotopt') 		      ///
-				 (scatter `temp_pred0' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 & `temp_i' == 1, msymbol(x) `scatterplotopt')           ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt')   ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick)`lineCFplotopt'),  ///
-				 legend(order(6 8 1) size(small) label(6 "Fitted") label(8 "Extrapolated") label(1 "`clevel'% confidence bands") rows(2))						  ///
-				 xtitle("Standardized Running Variable") ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
+				if (mi("`legendopt'")) {
+					local legendopt `" order(5 7 3 1) size(small) label(6 "Fitted") label(8 "Extrapolated") label(3 "Within-bin Mean") label(1 "`clevel'% confidence bands") rows(2) "'
+				}
+				graph twoway  ///
+				(rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0, fcolor(%25) lwidth(none) `areaplotopt')			  ///
+				(rarea `fitlb' `fitub' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, fcolor(%25) lwidth(none) `areaplotopt')            ///
+				(scatter `temp_pred' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) `scatterplotopt') 		      ///
+				(lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				(lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				(lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt')   ///
+				(lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick)`lineCFplotopt'),  ///
+				legend(`legendopt') xtitle("Standardized Running Variable") ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
 			 } 
 			 else {
-				 graph twoway  ///
-				 (scatter `temp_pred1' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) `scatterplotopt') 		          ///
-				 (scatter `temp_pred0' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' >= 0 & `temp_i' == 1, msymbol(x) `scatterplotopt')                ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
-				 (lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt')   ///
-				 (lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt'),  ///
-				 legend(order(4 6) size(small) label(4 "Fitted") label(6 "Extrapolated")) xtitle("Standardized Running Variable") 				                      ///
-				 ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
+				if (mi("`legendopt'")) {
+					local legendopt `" order(3 5 1) size(small) label(4 "Fitted") label(6 "Extrapolated") label(1 "Within-bin Mean")"'
+				}
+				graph twoway  ///
+				(scatter `temp_pred' `temp_x' if `temp_x' > `band_l' & `temp_x' < `band_r' & `running' < 0 & `temp_i' == 1, msymbol(x) `scatterplotopt') 		          ///
+				(lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				(lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(solid) lw(medthick) `lineplotopt')     ///
+				(lpoly `fit1' `running' if `running' > `band_l' & `running' < `band_r' & `running' < 0,  deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt')   ///
+				(lpoly `fit0' `running' if `running' > `band_l' & `running' < `band_r' & `running' >= 0, deg(`dg') k(`kernel') lp(shortdash) lw(medthick) `lineCFplotopt'),  ///
+			    legend(`legendopt') xtitle("Standardized Running Variable") ytitle("Outcome") xline(0) xlabel(`x_lb'(`x_step')`x_ub') ylabel(,nogrid) `gphoptions'
 			 }
 			
 		     }

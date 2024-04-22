@@ -489,10 +489,10 @@ version 14.0
 					replace num2 = `vertbar' if num2 == `nquant_l' + 1
 					replace num2 = 0.5 if num2 == 1
 					replace num2 = _n + 0.5 if num2 == _n
-					twoway (line ATTl num2 if num > `vertbar', lp(dash) lw(vvthin) color(%40) `attciplotopt')    /// /* ATT lower bound      */
-					       (line ATTu num2 if num > `vertbar', lp(dash) lw(vvthin) color(%40) `attciplotopt')    /// /* ATT upper bound      */
-   						   (line ATNTl num2 if num < `vertbar', lp(dash) lw(vvthin) color(%40) `atntciplotopt')  /// /* ATNT lower bound     */
-   						   (line ATNTu num2 if num < `vertbar', lp(dash) lw(vvthin) color(%40) `atntciplotopt')  /// /* ATNT upper bound     */
+					twoway (line ATTl num2 if num > `vertbar', lp(dash) lw(vvthin) `attciplotopt')    					  /// /* ATT lower bound      */
+					       (line ATTu num2 if num > `vertbar', lp(dash) lw(vvthin) `attciplotopt')    					  /// /* ATT upper bound      */
+   						   (line ATNTl num2 if num < `vertbar', lp(dash) lw(vvthin) `atntciplotopt')  					  /// /* ATNT lower bound     */
+   						   (line ATNTu num2 if num < `vertbar', lp(dash) lw(vvthin) `atntciplotopt')  					  /// /* ATNT upper bound     */
 						   (line ATT num2 if num > `vertbar', lp(solid) lw(thin) `attplotopt') 				     	 	  /// /* ATT point estimate   */
 						   (line ATNT num2 if num < `vertbar', lp(solid) lw(thin) `atntplotopt') 					 	  /// /* ATNT point estimate  */
 						   (rspike QTLES5 QTLES6 num, `qtleciplotopt')	 	  											  /// /* Qtles CI             */
