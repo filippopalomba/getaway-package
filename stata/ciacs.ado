@@ -8,7 +8,7 @@ program ciacs, eclass
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Assign(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) NBins(integer 10)  ///
-				site(varname) asis gphoptions(string) pscore(string) probit KDensity NOGraph]
+				site(varname) asis gphoptions(string) legendopt(string) pscore(string) probit KDensity NOGraph]
 			  
 			  tempvar pred temp temp_x temp_y1 temp_y0 temp_i score_std
 			  
@@ -102,19 +102,23 @@ version 14.0
 					local tk2 = `tk1'*2
 					local tk3 = `tk1'*3
 					local tk4 = `tk1'*4
-										
-						** Plot common support histograms
-						graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, color(navy)) (bar `temp_y0' `temp_x' if `temp_i' == 1, color(maroon)),  ///
-							xtitle("Propensity Score") ytitle("Frequency") legend(label(1 "Treated") label(2 "Control") size(small)) 				   ///
-							xlabel(0 "0" `tk1' "0.2" `tk2' "0.4" `tk3' "0.6" `tk4' "0.8" `nbins' "1") ylabel("", nogrid)   	         				   ///
-							title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
-						}				
+
+					if mi("`legendopt'") {
+						local legendopt `" label(1 "Treated") label(2 "Control") size(small) "'
+					}
+
+					** Plot common support histograms
+					graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, color(navy)) (bar `temp_y0' `temp_x' if `temp_i' == 1, color(maroon)),  ///
+						xtitle("Propensity Score") ytitle("Frequency") legend(`legendopt') 				   ///
+						xlabel(0 "0" `tk1' "0.2" `tk2' "0.4" `tk3' "0.6" `tk4' "0.8" `nbins' "1") ylabel("", nogrid)   	         				   ///
+						title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
+					}				
 					
 					if !mi("`kdensity'") & mi("`nograph'") {
 					
 						** Plot kdensities
 						graph twoway (kdensity `pred' if `assign', color(navy) lp(solid)) (kdensity `pred' if !`assign', color(maroon) lp(solid)),    ///
-							xtitle("Propensity Score") ytitle("Density") legend(label(1 "Treated") label(2 "Control") size(small))   				  ///
+							xtitle("Propensity Score") ytitle("Density") legend(`legendopt')   				  ///
 							xlabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1 "1") ylabel(, nogrid)   	 						 				  ///
 							title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
 						}

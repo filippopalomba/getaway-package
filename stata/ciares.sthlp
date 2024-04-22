@@ -31,6 +31,7 @@
 {cmd:lineL2plotopt(}{it:string}{cmd:)}
 {cmd:lineR2plotopt(}{it:string}{cmd:)}
 {cmd:gphoptions(}{it:string}{cmd:)}
+{cmd:legendopt(}{it:string}{cmd:)}
 ]{p_end}
 
 {synoptset 28 tabbed}{...}

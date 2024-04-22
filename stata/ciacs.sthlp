@@ -26,10 +26,12 @@
 {cmd:site(}{it:varname}{cmd:)}
 {cmd:asis}
 {cmd:gphoptions(}{it:string}{cmd:)}
+{cmd:legendopt(}{it:string}{cmd:)}
 {cmd:pscore(}{it:string}{cmd:)}
 {cmd:probit}
 {cmd:kdensity}
-{cmd:nograph}]{p_end}
+{cmd:nograph}
+]{p_end}
 
 {synoptset 28 tabbed}{...}
 
@@ -81,6 +83,10 @@
 {pstd}
 {p_end}
 {synopt:{opt gphoptions(string)}}  specifies graphical options to be passed on to the underlying graph command.
+
+{pstd}
+{p_end}
+{synopt:{opt legendopt(string)}} specifies graphical options to be passed on to the underlying plot legend.
 
 {pstd}
 {p_end}
