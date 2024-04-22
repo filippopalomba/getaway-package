@@ -8,7 +8,8 @@ program ciacs, eclass
 version 14.0           
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Assign(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) NBins(integer 10)  ///
-				site(varname) asis gphoptions(string) legendopt(string) pscore(string) probit KDensity NOGraph]
+				site(varname) asis gphoptions(string) pscore(string) probit KDensity NOGraph ///
+				barTopt(string) barCopt(string) lineTopt(string) lineCopt(string) legendopt(string)]
 			  
 			  tempvar pred temp temp_x temp_y1 temp_y0 temp_i score_std
 			  
@@ -107,8 +108,21 @@ version 14.0
 						local legendopt `" label(1 "Treated") label(2 "Control") size(small) "'
 					}
 
+					if (mi("`barTopt'")) {
+						local barTopt `"color(navy)"'
+					}
+					if (mi("`barCopt'")) {
+						local barCopt `"color(maroon)"'
+					}
+					if (mi("`lineTopt'")) {
+						local lineTopt `"color(navy) lp(solid)"'
+					}
+					if (mi("`lineCopt'")) {
+						local lineCopt `"color(maroon) lp(solid)"'
+					}
+
 					** Plot common support histograms
-					graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, color(blue%50)) (bar `temp_y0' `temp_x' if `temp_i' == 1, color(red%50)),  ///
+					graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, `barTopt') (bar `temp_y0' `temp_x' if `temp_i' == 1, `barCopt'),  ///
 						xtitle("Propensity Score") ytitle("Frequency") legend(`legendopt') 				   ///
 						xlabel(0 "0" `tk1' "0.2" `tk2' "0.4" `tk3' "0.6" `tk4' "0.8" `nbins' "1") ylabel("", nogrid)   	         				   ///
 						title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
@@ -117,7 +131,7 @@ version 14.0
 					if !mi("`kdensity'") & mi("`nograph'") {
 					
 						** Plot kdensities
-						graph twoway (kdensity `pred' if `assign', color(navy) lp(solid)) (kdensity `pred' if !`assign', color(maroon) lp(solid)),    ///
+						graph twoway (kdensity `pred' if `assign', `lineTopt') (kdensity `pred' if !`assign', `lineCopt'),    ///
 							xtitle("Propensity Score") ytitle("Density") legend(`legendopt')   				  ///
 							xlabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1 "1") ylabel(, nogrid)   	 						 				  ///
 							title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'

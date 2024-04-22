@@ -26,11 +26,15 @@
 {cmd:site(}{it:varname}{cmd:)}
 {cmd:asis}
 {cmd:gphoptions(}{it:string}{cmd:)}
-{cmd:legendopt(}{it:string}{cmd:)}
 {cmd:pscore(}{it:string}{cmd:)}
 {cmd:probit}
 {cmd:kdensity}
 {cmd:nograph}
+{cmd:legendopt(}{it:string}{cmd:)}
+{cmd:barTopt(}{it:string}{cmd:)}
+{cmd:barCopt(}{it:string}{cmd:)}
+{cmd:lineTopt(}{it:string}{cmd:)}
+{cmd:lineCopt(}{it:string}{cmd:)}
 ]{p_end}
 
 {synoptset 28 tabbed}{...}
@@ -86,10 +90,6 @@
 
 {pstd}
 {p_end}
-{synopt:{opt legendopt(string)}} specifies graphical options to be passed on to the underlying plot legend.
-
-{pstd}
-{p_end}
 {synopt:{opt pscore(string)}}  specifies the name of the variable containing the pscore rather than the defaul logit model.
 This variable is added to the current dataset.
 
@@ -104,6 +104,26 @@ This variable is added to the current dataset.
 {pstd}
 {p_end}
 {synopt:{opt nog:raph}}  suppresses any graphical output.
+
+{pstd}
+{p_end}
+{synopt:{opt legendopt(string)}} specifies graphical options to be passed on to the underlying plot legend.
+
+{pstd}
+{p_end}
+{synopt:{opt barTopt(string)}} specifies graphical options to be passed on to the underlying bar chart for the treated units.
+
+{pstd}
+{p_end}
+{synopt:{opt barCopt(string)}} specifies graphical options to be passed on to the underlying bar chart for the control units.
+
+{pstd}
+{p_end}
+{synopt:{opt lineTopt(string)}} specifies graphical options to be passed on to the underlying density line for the treated units.
+
+{pstd}
+{p_end}
+{synopt:{opt lineTopt(string)}} specifies graphical options to be passed on to the underlying density line for the control units.
 
     {hline}
 
