@@ -1,7 +1,8 @@
 **************************************************************
 ** Author: Filippo Palomba
-** Date: 4 Mar 2023
-** Produce figures for getaway paper
+** Date: 22 Apr 2024
+** Produce figures for "Getting away from the cutoff in
+** regression discontinuity designs", Palomba (2024), SJ
 **************************************************************
 
 ***************************************
@@ -50,14 +51,16 @@ ciares w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) b(7) site(site) nb(10 10) cmpr(1 1) ///
 gphoptions(xlabel(-6(3)6) title("") scheme(white_tableau)) 				    ///
 scatterplotopt(mc(black) msize(large)) scatter2plotopt(mc(black%30) 		///
 msize(large)) lineLplotopt(lc(red)) lineRplotopt(lc(red)) 				    ///
-lineL2plotopt(lc(red%30)) lineR2plotopt(lc(red%30))
+lineL2plotopt(lc(red%30)) lineR2plotopt(lc(red%30) ylabel(,nogrid) xlabel(,nogrid))
 
 graph export "$fig/ciares.png", replace
 graph close
 
 * verify common support 
-ciacs w1 w2 w1sq w2sq w2Xw1, o(Y) assign(T) s(X) c(0) b(7) site(site) ///
-pscore(pscore) gphoptions(title("") scheme(white_tableau)) 
+ciacs w1 w2 w1sq w2sq w2Xw1, o(Y) assign(T) s(X) c(0) b(7) site(site) 		///
+pscore(pscore) gphoptions(title("") scheme(white_tableau) yscale(lc(white)) ///
+yline(0, lp(solid) lc(black%40))) barTopt(color("214 114 54")         		///
+lcolor(black)) barCopt(color("241 187 123") lcolor(black))
 
 graph export "$fig/ciacs.png", replace
 graph close
@@ -66,10 +69,9 @@ generate incs = pscore >= e(CSmin) & pscore <= e(CSmax)
 tabulate incs T
 
 * estimate treatment effects away from the cutoff
-drop effect_est
 getaway w1 w2 w1sq w2sq w2Xw1 if incs, o(Y) s(X) c(0) b(7) site(site) ///
 qtleplot nquant(5 5) boot(100) gphoptions(scheme(white_tableau) 	  ///
- title("")) genvar(effect_est) reghd 				  				  ///
+ title("") ylabel(,nogrid) xlabel(, nogrid)) genvar(effect_est) reghd ///
 attciplotopt(lw(medium) lc(dkgreen%80)) 	 						  ///
 attplotopt(lw(medthick) lc(dkgreen%80)) 	 						  ///
 atntciplotopt(lw(medium) lc(cranberry%80)) 							  ///
