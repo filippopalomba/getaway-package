@@ -25,12 +25,13 @@
 {cmd:site(}{it:varname}{cmd:)}
 {cmd:nbins(}{it:numlist}{cmd:)}
 {cmd:clevel(}{it:#}{cmd:)}
-{cmd:nose}
+{cmd:nostderr}
 {cmd:gphoptions(}{it:string}{)}
 {cmd:scatterplotopt(}{it:string}{cmd:)}
 {cmd:areaplotopt(}{it:string}{cmd:)}
 {cmd:lineplotopt(}{it:string}{cmd:)}
 {cmd:lineCFplotopt(}{it:string}{cmd:)}
+{cmd:legendopt(}{it:string}{cmd:)}
 ]{p_end}
 
 {synoptset 28 tabbed}{...}
@@ -90,7 +91,7 @@ with within-bin averages of the counterfactual outcome to show the fit of the no
 
 {pstd}
 {p_end}
-{synopt:{opt nose}}  if specified standard errors are not computed and plotted.
+{synopt:{opt nostderr}}  if specified standard errors are not computed and plotted.
 
 {pstd}
 {p_end}
@@ -112,6 +113,9 @@ with within-bin averages of the counterfactual outcome to show the fit of the no
 {p_end}
 {synopt:{opt areaplotopt(string)}} specifies graphical options to be passed on to the underlying confidence bands plot.
 
+{pstd}
+{p_end}
+{synopt:{opt legendopt(string)}} specifies graphical options to be passed on to the underlying plot legend.
 
     {hline}
 

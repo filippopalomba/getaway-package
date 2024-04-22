@@ -497,7 +497,7 @@ version 14.0
 						   (line ATNT num2 if num < `vertbar', lp(solid) lw(thin) `atntplotopt') 					 	  /// /* ATNT point estimate  */
 						   (rspike QTLES5 QTLES6 num, `qtleciplotopt')	 	  											  /// /* Qtles CI             */
 						   (scatter QTLES1 num, m(T) `qtleplotopt'), 											 	      /// /* Qtles point estimate */
-						    xlabel(1(1)`effnq')  ytitle("Treatment Effect ") ylabel(,nogrid) legend(`legendopt') 		  ///
+						    xlabel(1(1)`effnq', nogrid)  ytitle("Treatment Effect ") ylabel(,nogrid) legend(`legendopt')  ///
 							xtitle("Quantiles") title("Treatment Effect") xline(`vertbar',lc(black) lw(vthin) lp(dash))   ///
 							`gphoptions'						
 					

@@ -118,7 +118,7 @@ version 14.0
 					** Plot common support histograms
 					graph twoway (bar `temp_y1' `temp_x' if `temp_i' == 1, `barTopt') (bar `temp_y0' `temp_x' if `temp_i' == 1, `barCopt'),  ///
 						xtitle("Propensity Score") ytitle("Frequency") legend(`legendopt') 				   ///
-						xlabel(0 "0" `tk1' "0.2" `tk2' "0.4" `tk3' "0.6" `tk4' "0.8" `nbins' "1") ylabel("", nogrid)   	         				   ///
+						xlabel(0 "0" `tk1' "0.2" `tk2' "0.4" `tk3' "0.6" `tk4' "0.8" `nbins' "1", nogrid) ylabel("", nogrid)   	         				   ///
 						title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
 					}				
 					
@@ -127,7 +127,7 @@ version 14.0
 						** Plot kdensities
 						graph twoway (kdensity `pred' if `assign', `lineTopt') (kdensity `pred' if !`assign', `lineCopt'),    ///
 							xtitle("Propensity Score") ytitle("Density") legend(`legendopt')   				  ///
-							xlabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1 "1") ylabel(, nogrid)   	 						 				  ///
+							xlabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1 "1", nogrid) ylabel(, nogrid)   	 						 				  ///
 							title("Common Support") note("T:`N_T', C:`N_C'") `gphoptions'
 						}
 						

@@ -13,11 +13,13 @@ cap mkdir article
 cap mkdir article/fig_git
 global fig "article/fig_git"
 
+graph set window fontface "Garamond"
+
+
 use "data/simulated_getaway.dta", clear
 
 summarize Y T X cutoff
 tabulate cutoff
-
 
 * visualize data
 twoway (scatter Y X if site == 1, mc(cyan) m(o))                    ///
@@ -44,17 +46,18 @@ generate w2Xw1 = w2*w1
 ciatest w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) c(0) b(7) p(2) site(site) 
 
 * visually check that CIA holds
-ciares w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) b(7) site(site) nb(10 10) ///
-gphoptions(xlabel(-6(3)6) title("") graphregion(color(white))     ///
-plotregion(color(white)) scheme(white_tableau) legend(off))
+ciares w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) b(7) site(site) nb(10 10) cmpr(1 1) ///
+gphoptions(xlabel(-6(3)6) title("") scheme(white_tableau)) 				    ///
+scatterplotopt(mc(black) msize(large)) scatter2plotopt(mc(black%30) 		///
+msize(large)) lineLplotopt(lc(red)) lineRplotopt(lc(red)) 				    ///
+lineL2plotopt(lc(red%30)) lineR2plotopt(lc(red%30))
 
 graph export "$fig/ciares.png", replace
 graph close
 
 * verify common support 
 ciacs w1 w2 w1sq w2sq w2Xw1, o(Y) assign(T) s(X) c(0) b(7) site(site) ///
-pscore(pscore) gphoptions(title("") graphregion(color(white))         ///
-plotregion(color(white)) scheme(white_tableau)) 
+pscore(pscore) gphoptions(title("") scheme(white_tableau)) 
 
 graph export "$fig/ciacs.png", replace
 graph close
@@ -63,11 +66,16 @@ generate incs = pscore >= e(CSmin) & pscore <= e(CSmax)
 tabulate incs T
 
 * estimate treatment effects away from the cutoff
+drop effect_est
 getaway w1 w2 w1sq w2sq w2Xw1 if incs, o(Y) s(X) c(0) b(7) site(site) ///
-qtleplot nquant(5 5) boot(200) gphoptions(graphregion(color(white))   ///
-plotregion(color(white)) scheme(white_tableau) legend(rows(4)) 		  ///
-title("")) genvar(effect_est) reghd
-
+qtleplot nquant(5 5) boot(100) gphoptions(scheme(white_tableau) 	  ///
+ title("")) genvar(effect_est) reghd 				  				  ///
+attciplotopt(lw(medium) lc(dkgreen%80)) 	 						  ///
+attplotopt(lw(medthick) lc(dkgreen%80)) 	 						  ///
+atntciplotopt(lw(medium) lc(cranberry%80)) 							  ///
+atntplotopt(lw(medthick) lc(cranberry%80))   						  ///
+qtleplotopt(msize(medlarge) mc(black) m(D))     					  ///
+qtleciplotopt(lw(medium) lc(black))
 
 graph export "$fig/getaway.png", replace
 graph close
@@ -112,9 +120,9 @@ restore
 
 * visualize potential outcomes functions through kernel-smoothing
 getawayplot w1 w2 w1sq w2sq w2Xw1, o(Y) s(X) c(0) b(7) k(triangle)       ///
-d(2) nb(30) site(site) gphoptions(xlabel(-6(3)6)                         ///
-graphregion(color(white)) plotregion(color(white)) scheme(white_tableau) ///
-legend(rows(3)))
+d(2) nb(30) site(site) scatterplotopt(msize(small) mc(black) m(D))       ///
+lineplotopt(lw(medthick) lc(black)) gphoptions(scheme(white_tableau)     ///
+legend(rows(2) position(6))) areaplotopt(color(navy))
 
 graph export "$fig/getawayplot.png", replace
 graph close
