@@ -9,7 +9,8 @@ program ciares
 version 14.0
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) NBins(numlist) site(varname) ///
-		gphoptions(string) cmpr(numlist max=2 integer)]      
+		cmpr(numlist max=2 integer) gphoptions(string) scatterplotopt(string) scatter2plotopt(string) lineLplotopt(string) ///
+		lineRplotopt(string) lineL2plotopt(string) lineR2plotopt(string) ]      
  						
 				tempvar resl resr resl_cmp resr_cmp res res_cmp cut_x cut_xR cond_y cond_y_cmp toplot assign running intrc
 
@@ -158,20 +159,20 @@ version 14.0
 				local x_step = (`band_r' -`band_l')/5
 				
 				if mi("`cmpr'"){
-					twoway (scatter `cond_y' `cut_x' if `toplot' == 1, xline(0, lpattern(shortdash))) 									      ///
-						   (lfit `res' `running' if `running' < 0, lpattern(solid) lcolor(red))       										  ///
-						   (lfit `res' `running' if `running' >= 0, lpattern(solid) lcolor(green)),      									  ///
+					twoway (scatter `cond_y' `cut_x' if `toplot' == 1, `scatterplotopt' xline(0, lpattern(shortdash))) 									      ///
+						   (lfit `res' `running' if `running' < 0, `lineLplotopt' lpattern(solid) lcolor(red))       										  ///
+						   (lfit `res' `running' if `running' >= 0, `lineRplotopt' lpattern(solid) lcolor(green)),      									  ///
 						   ylabel(,nogrid) xlabel(`x_lb'(`x_step')`x_ub') ytitle("Residuals") 												  ///
 						   xtitle("Running Variable") title("Visualization of the CIA")              										  ///
 						   legend(order(1 2 3) lab(1 "Within-bin Mean") lab(2 "Conditional") lab(3 "Conditional") rows(1) position(6)) `gphoptions' 
 					}
 				else {
-					twoway (lfit `res' `running' if `running' < 0, lpattern(solid) lcolor(red) lwidth(thick))       										  ///
-						   (lfit `res' `running' if `running' >= 0, lpattern(solid) lcolor(red) lwidth(thick))      									      ///
-						   (scatter `cond_y' `cut_x' if `toplot' == 1, mc(black) msymbol(smcircle) xline(0, lpattern(shortdash))) 		  ///					       
-						   (lfit `res_cmp' `running' if `running' < 0, lpattern(dash) lcolor(red%20) yaxis(2) lwidth(thick))   							  ///
-						   (lfit `res_cmp' `running' if `running' >= 0, lpattern(dash) lcolor(red%20) yaxis(2) lwidth(thick))    							  ///
-						   (scatter `cond_y_cmp' `cut_x' if `toplot' == 1, mc(black%20) msymbol(smdiamond) yaxis(2)), 									  ///
+					twoway (lfit `res' `running' if `running' < 0, `lineLplotopt' lpattern(solid) lcolor(red) lwidth(thick))       										  ///
+						   (lfit `res' `running' if `running' >= 0, `lineRplotopt' lpattern(solid) lcolor(red) lwidth(thick))      									      ///
+						   (scatter `cond_y' `cut_x' if `toplot' == 1, `scatterplotopt' mc(black) msymbol(smcircle) xline(0, lpattern(shortdash))) 		  ///					       
+						   (lfit `res_cmp' `running' if `running' < 0, `lineL2plotopt' lpattern(dash) lcolor(red%20) yaxis(2) lwidth(thick))   							  ///
+						   (lfit `res_cmp' `running' if `running' >= 0, `lineR2plotopt' lpattern(dash) lcolor(red%20) yaxis(2) lwidth(thick))    							  ///
+						   (scatter `cond_y_cmp' `cut_x' if `toplot' == 1, `scatter2plotopt' mc(black%20) msymbol(smdiamond) yaxis(2)), 									  ///
 						   ylabel(,nogrid) xlabel(`x_lb'(`x_step')`x_ub') ytitle("conditional") ytitle("unconditional", axis(2))              ///
 						   xtitle("Running Variable") title("") legend(order(3 6 1 4) lab(3 "conditional mean") lab(6 "unconditional mean")           ///
 						   lab(1 "conditional regression") lab(4 "unconditional regression")  rows(2) position(6)) `gphoptions' 

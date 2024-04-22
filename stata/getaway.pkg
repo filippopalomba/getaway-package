@@ -1,4 +1,4 @@
-v 0.7
+v 0.8
 d {bf:GETAWAY}: A Stata package for regression discontinuity designs away from the cutoff.
 d See {bf:help getaway} after installation.
 d
@@ -8,7 +8,7 @@ d KW: Stata
 d KW: regression discontinuity
 d KW: causal inference
 d
-d This  version: 01 Dec 2023
+d This  version: 22 Apr 2024
 d First version: 24 Sep 2019
 d License: MIT
 d 

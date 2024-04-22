@@ -1,5 +1,5 @@
 {smcl}
-{* *!version 0.7 2023-12-01}{...}
+{* *!version 0.8 2024-04-22}{...}
 {viewerjumpto "Syntax" "##syntax"}{...}
 {viewerjumpto "Description" "ciares##description"}{...}
 {viewerjumpto "Options" "ciares##options"}{...}
@@ -23,8 +23,15 @@
 [{cmd:cutoff(}{it:#}{cmd:)}  
 {cmd:nbins(}{it:numlist}{cmd:)}
 {cmd:site(}{it:varname}{cmd:)}
+{cmd:cmpr(}{it:numlist}{cmd:)}
+{cmd:scatterplotopt(}{it:string}{cmd:)}
+{cmd:scatter2plotopt(}{it:string}{cmd:)}
+{cmd:lineLplotopt(}{it:string}{cmd:)}
+{cmd:lineRplotopt(}{it:string}{cmd:)}
+{cmd:lineL2plotopt(}{it:string}{cmd:)}
+{cmd:lineR2plotopt(}{it:string}{cmd:)}
 {cmd:gphoptions(}{it:string}{cmd:)}
-{cmd:cmpr(}{it:numlist}{cmd:)}]{p_end}
+]{p_end}
 
 {synoptset 28 tabbed}{...}
 
@@ -71,14 +78,38 @@ If the CIA condition holds, then the plot should approximate a flat line. {p_end
 
 {pstd}
 {p_end}
+{synopt:{opt cmpr(numlist)}} adds the conditional regression function of {cmd: outcome} on the {cmd: score}. The form of polynomials on the left and on the right can be modelled independently - 
+eg. {cmd: cmpr(2 3)} for a second order polynomial on the left and a third order on the right.
+
+{pstd}
+{p_end}
 {synopt:{opt gphoptions(string)}} specifies graphical options to be passed on to the underlying graph command.
 
 {pstd}
 {p_end}
-{synopt:{opt cmpr(numlist)}} adds the conditional regression function of {cmd: outcome} on the {cmd: score}. The form of polynomials on the left and on the right can be modelled independently - 
-eg. {cmd: cmpr(2 3)} for a second order polynomial on the left and a third order on the right.
+{synopt:{opt scatterplotopt(string)} specifies graphical options to be passed on to the underlying scatter plot.}
 
-    {hline}
+{pstd}
+{p_end}
+{synopt:{opt scatter2plotopt(string)} specifies graphical options to be passed on to the underlying scatter plot (secondary axis).}
+
+{pstd}
+{p_end}
+{synopt:{opt lineLplotopt(string)} specifies graphical options to be passed on to the underlying line plot (left of cutoff).}
+
+{pstd}
+{p_end}
+{synopt:{opt lineRplotopt(string)} specifies graphical options to be passed on to the underlying line plot (right of cutoff).}
+
+{pstd}
+{p_end}
+{synopt:{opt lineLplotopt(string)} specifies graphical options to be passed on to the underlying line plot (left of cutoff, secondary axis).}
+
+{pstd}
+{p_end}
+{synopt:{opt lineRplotopt(string)} specifies graphical options to be passed on to the underlying line plot (right of cutoff, secondary axis).}
+
+{hline}
 
 
 {marker examples}{...}
