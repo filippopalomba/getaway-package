@@ -10,7 +10,7 @@ version 14.0
 		
 		syntax varlist(ts fv) [if] [in], Outcome(varname) Score(varname) Bandwidth(string) [Cutoff(real 0) Kernel(string) site(varname) Degree(integer 1) ///
 		NBins(numlist max=2 integer) clevel(real 95) nostderr gphoptions(string) scatterplotopt(string) lineplotopt(string) ///
-		lineCFplotopt(string) areaplotopt(string)]
+		lineCFplotopt(string) areaplotopt(string) legendopt(string)]
 
 		tempvar running	pred1 pred0 fit0 fit1 fit0se fit1se fitlb fitub temp_x temp_xR temp_y temp_pred temp_pred0 temp_pred1 temp_i
 			   
