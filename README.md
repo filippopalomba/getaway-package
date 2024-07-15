@@ -1,6 +1,6 @@
 # Getaway - RD Treatment Effects away from the cutoff
 
-This repository hosts the Stata `getaway package` that implements point estimation and inference away from the cutoff in Regression Discontinuity (RD) designs as proposed in [Angrist and Rokkanen (2015)](https://economics.mit.edu/files/10851).
+This repository hosts the Stata `getaway package` that implements point estimation and inference away from the cutoff in Regression Discontinuity (RD) designs as proposed in [Angrist and Rokkanen (2015)](https://economics.mit.edu/files/10851). Moreover, it contains the file to generate the data and replicates the figures in [Palomba (2024)](https://filippopalomba.github.io/docs/Palomba_2024_getaway_SJ.pdf).
 
 Angrist and Rokkanen (2015) exploit additional information contained in explanatory variables other than the score to estimate treatment effects away from the cutoff. The only assumption needed is a \`_conditional independence assumption_'' (CIA), which requires mean independence between potential outcomes and the score variable conditional on a vector of other covariates, together with a common support condition. Moreover, the CIA has implications that can be tested with standard hypothesis tests.
 
@@ -35,10 +35,11 @@ net install getaway, from("https://raw.githubusercontent.com/filippopalomba/geta
 
 ## Examples of papers using this package:
 
-- [Cingano, Palomba, Pinotti, and Rettore (2023)](https://filippopalomba.github.io/docs/Cingano-Palomba-Pinotti-Rettore_2023_subsidies_main.pdf) - "Making Subsidies Work: Rules vs. Discretion", working paper.
+- [Cingano, Palomba, Pinotti, and Rettore (2024)](https://filippopalomba.github.io/docs/Cingano-Palomba-Pinotti-Rettore_2023_subsidies_main.pdf) - "Making Subsidies Work: Rules vs. Discretion", conditionally accepted, _Econometrica_.
 - [Incoronato and Lattanzio (2024)](https://lincoronato.github.io/files/jmp_incoronato.pdf) - "Place-Based Industrial Policies and Local Agglomeration in the Long Run", working paper.
 
 ## References
 
-- Angrist, Joshua D., and Miikka Rokkanen. "Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff." _Journal of the American Statistical Association_ 110, no. 512 (2015): 1331-1344.
+- Angrist, Joshua D., and Miikka Rokkanen. "Wanna get away? Regression discontinuity estimation of exam school effects away from the cutoff". _Journal of the American Statistical Association_ 110, no. 512 (2015): 1331-1344.
 - Fort, Margherita, Andrea Ichino, Enrico Rettore, and Giulio Zanella. "Multi-cutoff RD designs with observations located at each cutoff: problems and solutions". No. 0278. _Dipartimento di Scienze Economiche ``Marco Fanno''_, 2022.
+- Palomba, Filippo. "Getting Away from the Cutoff in Regression Discontinuity Designs". _Stata Journal_, 24, 3, pp.1-31, 2024.
