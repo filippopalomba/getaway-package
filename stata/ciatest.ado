@@ -1,5 +1,5 @@
-*! Date        : 01 Dec 2023
-*! Version     : 0.7
+*! Date        : 10 Aug 2024
+*! Version     : 0.9
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Test CIA to the left and to the right of the cutoff

@@ -1,5 +1,5 @@
-*! Date        : 01 Dec 2023
-*! Version     : 0.7
+*! Date        : 10 Aug 2024
+*! Version     : 0.9
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Algorithm for data-driven covariate selection to validate CIA condition
@@ -81,20 +81,19 @@ if !mi("`noprint'"){
 
 
 *** Check if the CIA holds without covariates
-disp as text "{hline 90}"
-disp as text "Algorithm Path:"
-
-di as text""
 qui ciatest `varlist' `if' `in', outcome(`outcome') score(`score') bandwidth(`bandwidth') cutoff(`cutoff') poly(`poly') `SEs' `fixedeff' `significance' 
 
-if e(CIAalready) == 1{
+if e(CIAalready) == 1 {
 	local alphaperc = `alpha'*100
 	display as text "{bf:Notice that the CIA condition is already satisfied without covariates!}"
 	display as text "{bf:You can treat the RDD as a random experiment within the actual bandwidth}"
 	display as text "{bf:of `bandwidth' at a `alphaperc'% confidence level.}"	
-	exit
 }
 
+disp as text "{hline 90}"
+disp as text "Algorithm Path:"
+
+di as text ""
 
 
 								   

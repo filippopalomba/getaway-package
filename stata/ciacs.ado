@@ -1,5 +1,5 @@
-*! Date        : 22 Apr 2024
-*! Version     : 0.8
+*! Date        : 10 Aug 2024
+*! Version     : 0.9
 *! Authors     : Filippo Palomba
 *! Email       : fpalomba@princeton.edu
 *! Description : Graphical visualization of the common support condition in RDD
