@@ -31,7 +31,7 @@ net install getaway, from("https://raw.githubusercontent.com/filippopalomba/geta
 - [getaway-software_article.pdf](https://filippopalomba.github.io/docs/Palomba_2023_getaway.pdf): software article
 - [generate-dataPalomba2024.do](https://github.com/filippopalomba/getaway-package/blob/main/generate-dataPalomba2024.do) : .do file to create the simulated dataset provided with the package
 - [replicationPalomba2024.do](https://github.com/filippopalomba/getaway-package/blob/main/replication-Palomba2024.do): walkthrough the main functionalities of the package
-- [MCunbiasedness.do](https://github.com/filippopalomba/getaway-package/blob/main/MCunbiasedness.do): proof by Monte-Carlo of A&R unbiasedness with simulated data
+- [MCconsistency.do](https://github.com/filippopalomba/getaway-package/blob/main/MCconsistency.do): proof by Monte-Carlo of A&R unbiasedness with simulated data
 
 ## Examples of papers using this package:
 
