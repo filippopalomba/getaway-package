@@ -36,7 +36,7 @@ net install getaway, from("https://raw.githubusercontent.com/filippopalomba/geta
 ## Examples of papers using this package:
 
 - [Cingano, Palomba, Pinotti, and Rettore (2025)](https://doi.org/10.3982/ECTA21319) - "Making Subsidies Work: Rules versus Discretion", _Econometrica_, 93, 3, pp. 747-778.
-- [Carlana, Chiuri, Miglino, and Tincani (2026)](https://michelacarlana.com/wp-content/uploads/2026/07/PACE_NBER_updated.pdf) - "How Far Can Inclusion Go? The Long-term Impacts of Preferential College Admissions", working paper.
+- [Carlana, Chiuri, Miglino, and Tincani (2026)](https://michelacarlana.com/wp-content/uploads/2026/07/PACE_NBER_updated.pdf) - "How Far Can Inclusion Go? The Long-term Impacts of Preferential College Admissions", NBER working paper.
 
 ## References
 
